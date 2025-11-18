@@ -16,3 +16,5 @@
 - [#issue번호] Fix : 버그 수정
 - [#issue번호] Docs : 문서 수정
 - etc
+ex)
+`git commit -m "[#1] Feat : User 엔티티 구현`
