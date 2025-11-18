@@ -8,7 +8,7 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show-sql: true
@@ -18,4 +18,17 @@ spring:
 jwt:
   secret: ${JWT_SECRET}
   access-token-validity-in-milliseconds: ${ACCESS_TOKEN_VALIDITY_IN_MILLISECONDS}
-  refresh-token-validity-in-milliseconds : ${REFRESH_TOKEN_VALIDITY_IN_MILLISECONDS}
+  refresh-token-validity-in-milliseconds: ${REFRESH_TOKEN_VALIDITY_IN_MILLISECONDS}
+
+kakao:
+  client-id: ${KAKAO_CLIENT_ID}
+  client-secret: ${KAKAO_CLIENT_SECRET}
+  redirect-uri: ${KAKAO_REDIRECT_URI}
+  authorization-uri: https://kauth.kakao.com/oauth/authorize
+  token-uri: https://kauth.kakao.com/oauth/token
+  user-info-uri: https://kapi.kakao.com/v2/user/me
+  user-name-attribute: id
+  scope:
+    - profile
+    - profile_image
+    - account_email
