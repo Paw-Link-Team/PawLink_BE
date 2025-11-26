@@ -1,7 +1,7 @@
 package com.gdg.backend.auth.jwt;
 
 import com.gdg.backend.auth.domain.User;
-import com.gdg.backend.auth.dto.TokenDto;
+import com.gdg.backend.auth.kakao.dto.KakaoTokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -41,7 +41,7 @@ public class TokenProvider {
         this.refreshTokenValiditySeconds = refreshTokenValiditySeconds;
     }
 
-    public TokenDto createToken(User user) {
+    public KakaoTokenDto createToken(User user) {
         Long nowTime = new Date().getTime();
 
         Date expiryDate = new Date(nowTime + accessTokenValiditySeconds);
@@ -49,7 +49,7 @@ public class TokenProvider {
 
         String accessToken = Jwts.builder()
                 .setSubject(user.getId().toString())
-                .claim("auth", user.getRole().name())
+                .claim("role", user.getRole().name())
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -60,9 +60,11 @@ public class TokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        return TokenDto.builder()
+        return KakaoTokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .expiresIn(accessTokenValiditySeconds / 1000)
+                .tokenType("bearer")
                 .build();
     }
 
