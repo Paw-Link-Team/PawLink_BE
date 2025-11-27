@@ -48,8 +48,8 @@ public class TokenProvider {
         Date refreshDate = new Date(nowTime + refreshTokenValiditySeconds);
 
         String accessToken = Jwts.builder()
-                .setSubject(user.getId().toString())
-                .claim("role", user.getRole().name())
+                .setSubject(user.getId().toString()) // user email
+                .claim("role", user.getRole().name()) //role : role에 따라 변경
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
