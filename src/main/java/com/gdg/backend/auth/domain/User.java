@@ -42,6 +42,9 @@ public class User {
     @Column(name = "user_profile_image", nullable = false, unique = true)
     private String profileImage;
 
+    @Column(name = "user_thumbnail_image", nullable = false, unique = true)
+    private String thumbnailImageUrl;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -66,7 +69,7 @@ public class User {
     }
 
     @Builder
-    public User(Long id, Long providerId, String email, String nickname, String profileImage, Role role, Provider provider, LocalDateTime createdAt, LocalDateTime updatedAt, String accessToken, String refreshToken) {
+    public User(Long id, Long providerId, String email, String nickname, String profileImage, Role role, Provider provider, String thumbnailImageUrl) {
         this.id = id;
         this.providerId = providerId;
         this.email = email;
@@ -74,9 +77,6 @@ public class User {
         this.profileImage = profileImage;
         this.role = role;
         this.provider = provider;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
+        this.thumbnailImageUrl = thumbnailImageUrl;
     }
 }
