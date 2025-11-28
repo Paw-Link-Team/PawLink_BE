@@ -32,3 +32,8 @@ kakao:
     - profile
     - profile_image
     - account_email
+
+naver:
+  client-id: ${NAVER_CLIENT_ID}
+  client_secret: ${NAVER_CLIENT_SECRET}
+  redirect-uri: ${NAVER_REDIRECT_URI}
