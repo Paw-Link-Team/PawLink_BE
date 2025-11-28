@@ -1,25 +1,43 @@
 package com.gdg.backend.auth.kakao.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 
 @Getter
 @NoArgsConstructor
 public class KakaoUserDto {
+
     @JsonProperty("id")
     private Long id;
+
+    @JsonProperty("properties")
+    private Properties properties;
 
     @JsonProperty("kakao_account")
     private KakaoAccount kakaoAccount;
 
     @Getter
     @NoArgsConstructor
+    public static class Properties {
+        @JsonProperty("nickname")
+        private String nickname;
+
+        @JsonProperty("profile_image")
+        private String profileImage;
+
+        @JsonProperty("thumbnail_image")
+        private String thumbnailImage;
+    }
+
+    @Getter
+    @NoArgsConstructor
     public static class KakaoAccount {
         @JsonProperty("profile")
         private Profile profile;
+
+        @JsonProperty("has_email")
+        private Boolean hasEmail;
 
         @JsonProperty("email")
         private String email;
@@ -36,12 +54,11 @@ public class KakaoUserDto {
 
         @JsonProperty("profile_image_url")
         private String profileImageUrl;
-    }
 
-    @Builder
-    public KakaoUserDto(Long id, KakaoAccount kakaoAccount, Profile profile) {
-        this.id = id;
-        this.kakaoAccount = kakaoAccount;
-        this.kakaoAccount.profile = profile;
+        @JsonProperty("is_default_image")
+        private Boolean isDefaultImage;
+
+        @JsonProperty("is_default_nickname")
+        private Boolean isDefaultNickname;
     }
 }

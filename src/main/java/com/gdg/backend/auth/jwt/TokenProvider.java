@@ -64,7 +64,9 @@ public class TokenProvider {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .expiresIn(accessTokenValiditySeconds / 1000)
+                .refreshTokenExpiresIn(refreshTokenValiditySeconds / 1000)
                 .tokenType("bearer")
+                .scope(user.getRole().name())
                 .build();
     }
 
