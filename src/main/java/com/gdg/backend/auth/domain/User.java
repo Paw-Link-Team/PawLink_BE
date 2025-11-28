@@ -1,6 +1,8 @@
 package com.gdg.backend.auth.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +13,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -18,16 +23,23 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
+@EntityListeners(AuditingEntityListener.class)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long kakaoId;
+    @Column(name = "user_provider_id", nullable = false, unique = true)
+    private Long providerId;
 
+    @Column(name = "user_email",  nullable = false, unique = true)
     private String email;
+
+    @Column(name = "user_nickname", nullable = false, unique = true)
     private String nickname;
+
+    @Column(name = "user_profile_image", nullable = false, unique = true)
     private String profileImage;
 
     @Enumerated(EnumType.STRING)
@@ -36,10 +48,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
+    @CreatedDate
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @Column(length = 500)
     private String accessToken;
+
+    @Column(length = 500)
     private String refreshToken;
 
     public void saveToken(String accessToken, String refreshToken) {
@@ -48,9 +66,9 @@ public class User {
     }
 
     @Builder
-    public User(Long id, Long kakaoId, String email, String nickname, String profileImage, Role role, Provider provider, LocalDateTime createdAt, LocalDateTime updatedAt, String accessToken, String refreshToken) {
+    public User(Long id, Long providerId, String email, String nickname, String profileImage, Role role, Provider provider, LocalDateTime createdAt, LocalDateTime updatedAt, String accessToken, String refreshToken) {
         this.id = id;
-        this.kakaoId = kakaoId;
+        this.providerId = providerId;
         this.email = email;
         this.nickname = nickname;
         this.profileImage = profileImage;
