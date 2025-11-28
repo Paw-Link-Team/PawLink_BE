@@ -1,6 +1,7 @@
 package com.gdg.backend.auth.kakao.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,5 +36,12 @@ public class KakaoUserDto {
 
         @JsonProperty("profile_image_url")
         private String profileImageUrl;
+    }
+
+    @Builder
+    public KakaoUserDto(Long id, KakaoAccount kakaoAccount, Profile profile) {
+        this.id = id;
+        this.kakaoAccount = kakaoAccount;
+        this.kakaoAccount.profile = profile;
     }
 }
