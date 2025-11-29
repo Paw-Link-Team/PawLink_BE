@@ -11,7 +11,6 @@ import com.gdg.backend.auth.jwt.TokenProvider;
 import com.gdg.backend.auth.kakao.dto.KakaoTokenDto;
 import com.gdg.backend.auth.kakao.dto.KakaoUserDto;
 import com.gdg.backend.auth.repository.UserRepository;
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -100,7 +99,7 @@ public class KakaoAuthService {
 
         userRepository.save(user);
 
-        return tokenProvider.createToken(user);
+        return tokenProvider.createToken(user, getKakaoToken); //getKakaoToken은 idToken임
     }
 
     private User saveUser(KakaoUserDto kakaoUserDto){
@@ -119,7 +118,6 @@ public class KakaoAuthService {
     }
 
     private KakaoUserDto getKakaoUser(String accessToken){
-        System.out.println("accessToken: " + accessToken);
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -128,12 +126,15 @@ public class KakaoAuthService {
 
         RequestEntity<Void> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, URI.create(KAKAO_USERINFO_URI));
         ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
-        System.out.println("TOKEN RESPONSE = " + response.getBody());
         if(response.getStatusCode().is2xxSuccessful()){
             String json = response.getBody();
-            Gson gson = new Gson();
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
 
-            return gson.fromJson(json, KakaoUserDto.class);
+                return objectMapper.readValue(json, KakaoUserDto.class);
+            } catch (Exception e) {
+                throw new UserNotFoundException("유저 정보를 가져오는데 실패했습니다.");
+            }
         }
 
         throw new UserNotFoundException("유저 정보를 가져오는데 실패했습니다.");
