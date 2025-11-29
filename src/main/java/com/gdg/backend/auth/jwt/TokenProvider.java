@@ -41,7 +41,7 @@ public class TokenProvider {
         this.refreshTokenValiditySeconds = refreshTokenValiditySeconds;
     }
 
-    public KakaoTokenDto createToken(User user) {
+    public KakaoTokenDto createToken(User user, String getKakaoToken) {
         Long nowTime = new Date().getTime();
 
         Date expiryDate = new Date(nowTime + accessTokenValiditySeconds);
@@ -61,12 +61,13 @@ public class TokenProvider {
                 .compact();
 
         return KakaoTokenDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .expiresIn(accessTokenValiditySeconds / 1000)
-                .refreshTokenExpiresIn(refreshTokenValiditySeconds / 1000)
-                .tokenType("bearer")
-                .scope(user.getRole().name())
+                .tokenType("bearer ") // 토큰 타입은 bearer
+                .accessToken(accessToken) //accessToken저장
+                .idToken(getKakaoToken) //idToken을 카카오 서버에서 생성한 토큰
+                .expiresIn(accessTokenValiditySeconds / 1000) // accessToken 만료시간 / 초단위
+                .refreshToken(refreshToken) //refreshToken 저장
+                .refreshTokenExpiresIn(refreshTokenValiditySeconds / 1000) // refreshToken 만료시간 / 초단위
+                .scope(user.getRole().name()) // 역할
                 .build();
     }
 
