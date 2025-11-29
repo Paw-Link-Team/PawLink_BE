@@ -30,12 +30,13 @@ public class KakaoTokenDto {
     private String scope;
 
     @Builder
-    public KakaoTokenDto(String accessToken, String refreshToken, Long expiresIn, Long refreshTokenExpiresIn, String tokenType, String scope) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-        this.expiresIn = expiresIn;
-        this.refreshTokenExpiresIn = refreshTokenExpiresIn;
+    public KakaoTokenDto(String tokenType, String accessToken, String idToken, Long expiresIn, String refreshToken, Long refreshTokenExpiresIn, String scope) {
         this.tokenType = tokenType;
+        this.accessToken = accessToken;
+        this.idToken = idToken;
+        this.expiresIn = expiresIn;
+        this.refreshToken = refreshToken;
+        this.refreshTokenExpiresIn = refreshTokenExpiresIn;
         this.scope = scope;
     }
 }
