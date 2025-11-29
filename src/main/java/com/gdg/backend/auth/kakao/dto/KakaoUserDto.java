@@ -11,8 +11,12 @@ public class KakaoUserDto {
     @JsonProperty("id")
     private Long id;
 
+    @JsonProperty("connected_at")
+    private String connectedAt;
+
     @JsonProperty("properties")
     private Properties properties;
+
 
     @JsonProperty("kakao_account")
     private KakaoAccount kakaoAccount;
@@ -33,11 +37,26 @@ public class KakaoUserDto {
     @Getter
     @NoArgsConstructor
     public static class KakaoAccount {
+        @JsonProperty("profile_nickname_needs_agreement")
+        private Boolean profileNicknameNeedsAgreement;
+
+        @JsonProperty("profile_image_needs_agreement")
+        private Boolean profileImageNeedsAgreement;
+
         @JsonProperty("profile")
         private Profile profile;
 
         @JsonProperty("has_email")
         private Boolean hasEmail;
+
+        @JsonProperty("email_needs_agreement")
+        private Boolean emailNeedsAgreement;
+
+        @JsonProperty("is_email_valid")
+        private Boolean isEmailValid;
+
+        @JsonProperty("is_email_verified")
+        private Boolean isEmailVerified;
 
         @JsonProperty("email")
         private String email;
