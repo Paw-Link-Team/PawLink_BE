@@ -1,15 +1,15 @@
-package com.gdg.backend.auth.kakao.service;
+package com.gdg.backend.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gdg.backend.auth.domain.Provider;
-import com.gdg.backend.auth.domain.Role;
-import com.gdg.backend.auth.domain.User;
-import com.gdg.backend.auth.exception.BedReqeustException;
-import com.gdg.backend.auth.exception.UserNotFoundException;
-import com.gdg.backend.auth.jwt.TokenProvider;
-import com.gdg.backend.auth.kakao.dto.KakaoTokenDto;
-import com.gdg.backend.auth.kakao.dto.KakaoUserDto;
-import com.gdg.backend.auth.repository.UserRepository;
+import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.Role;
+import com.gdg.backend.user.domain.User;
+import com.gdg.backend.global.exception.BedReqeustException;
+import com.gdg.backend.global.exception.UserNotFoundException;
+import com.gdg.backend.global.jwt.TokenProvider;
+import com.gdg.backend.auth.dto.kakao.KakaoTokenDto;
+import com.gdg.backend.auth.dto.kakao.KakaoUserDto;
+import com.gdg.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;

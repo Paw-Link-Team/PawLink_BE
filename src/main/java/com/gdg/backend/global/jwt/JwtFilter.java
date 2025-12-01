@@ -1,4 +1,4 @@
-package com.gdg.backend.auth.jwt;
+package com.gdg.backend.global.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

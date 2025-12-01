@@ -1,4 +1,4 @@
-package com.gdg.backend.auth.config;
+package com.gdg.backend.global.config;
 
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;

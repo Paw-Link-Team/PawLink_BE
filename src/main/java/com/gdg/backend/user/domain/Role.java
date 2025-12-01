@@ -1,4 +1,4 @@
-package com.gdg.backend.auth.domain;
+package com.gdg.backend.user.domain;
 
 public enum Role {
     ADMIN,

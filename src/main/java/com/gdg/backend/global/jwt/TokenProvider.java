@@ -1,7 +1,7 @@
-package com.gdg.backend.auth.jwt;
+package com.gdg.backend.global.jwt;
 
-import com.gdg.backend.auth.domain.User;
-import com.gdg.backend.auth.kakao.dto.KakaoTokenDto;
+import com.gdg.backend.user.domain.User;
+import com.gdg.backend.auth.dto.kakao.KakaoTokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

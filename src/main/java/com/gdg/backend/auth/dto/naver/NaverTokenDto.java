@@ -1,4 +1,4 @@
-package com.gdg.backend.auth.naver.dto;
+package com.gdg.backend.auth.dto.naver;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

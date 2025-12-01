@@ -1,4 +1,4 @@
-package com.gdg.backend.auth.exception;
+package com.gdg.backend.global.exception;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {

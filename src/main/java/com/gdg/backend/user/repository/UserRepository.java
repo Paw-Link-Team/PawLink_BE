@@ -1,7 +1,7 @@
-package com.gdg.backend.auth.repository;
+package com.gdg.backend.user.repository;
 
-import com.gdg.backend.auth.domain.Provider;
-import com.gdg.backend.auth.domain.User;
+import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

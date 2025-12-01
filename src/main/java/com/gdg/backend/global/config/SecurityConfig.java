@@ -1,7 +1,7 @@
-package com.gdg.backend.auth.config;
+package com.gdg.backend.global.config;
 
-import com.gdg.backend.auth.jwt.JwtFilter;
-import com.gdg.backend.auth.jwt.TokenProvider;
+import com.gdg.backend.global.jwt.JwtFilter;
+import com.gdg.backend.global.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

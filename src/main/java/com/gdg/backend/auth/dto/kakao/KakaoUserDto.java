@@ -1,4 +1,4 @@
-package com.gdg.backend.auth.kakao.dto;
+package com.gdg.backend.auth.dto.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
