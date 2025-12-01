@@ -1,6 +1,5 @@
 package com.gdg.backend.auth.kakao.service;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdg.backend.auth.domain.Provider;
 import com.gdg.backend.auth.domain.Role;
@@ -51,7 +50,6 @@ public class KakaoAuthService {
 
     public String getKakaoToken(String code){
         RestTemplate restTemplate = new RestTemplate();
-        System.out.println("redirect_uri: " + redirectUri);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
@@ -68,7 +66,6 @@ public class KakaoAuthService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
         ResponseEntity<String> response = restTemplate.postForEntity(KAKAO_TOKEN_URI, request, String.class);
-        System.out.println("TOKEN RESPONSE = " + response.getBody());
 
         if(response.getStatusCode().is2xxSuccessful()){
             String json = response.getBody();
@@ -85,7 +82,7 @@ public class KakaoAuthService {
         throw new BedReqeustException("카카오 토큰 값을 가져온는데 실패했습니다.");
     }
 
-    public KakaoTokenDto loginOrSignUp(String getKakaoToken) {
+    public KakaoTokenDto loginOrSignUp(String getKakaoToken, Role role) {
         KakaoUserDto kakaoUserDto = getKakaoUser(getKakaoToken);
 
         if ((kakaoUserDto.getKakaoAccount() == null || kakaoUserDto.getKakaoAccount().getProfile() == null
@@ -94,22 +91,21 @@ public class KakaoAuthService {
             throw new UserNotFoundException("유저 정보가 없습니다.");
         }
 
-
-        User user = saveUser(kakaoUserDto);
+        User user = saveUser(kakaoUserDto, role);
 
         userRepository.save(user);
 
         return tokenProvider.createToken(user, getKakaoToken); //getKakaoToken은 idToken임
     }
 
-    private User saveUser(KakaoUserDto kakaoUserDto){
+    private User saveUser(KakaoUserDto kakaoUserDto, Role role) {
         return userRepository.findByEmail(kakaoUserDto.getKakaoAccount().getEmail())
                 .orElseGet(() ->userRepository.save(User.builder()
                 .email(kakaoUserDto.getKakaoAccount().getEmail())
                 .nickname(kakaoUserDto.getKakaoAccount().getProfile().getNickname())
                 .profileImage(kakaoUserDto.getKakaoAccount().getProfile().getProfileImageUrl())
                 .thumbnailImageUrl(kakaoUserDto.getKakaoAccount().getProfile().getThumbnailImageUrl())
-                .role(Role.ADMIN)
+                .role(role)
                 .provider(Provider.KAKAO)
                 .providerId(kakaoUserDto.getId())
                 .build()
