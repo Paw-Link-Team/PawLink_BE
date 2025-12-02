@@ -1,13 +1,9 @@
 package com.gdg.backend.auth.controller;
 
-import com.gdg.backend.user.domain.User;
 import com.gdg.backend.auth.service.KakaoAuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/login")
@@ -15,8 +11,4 @@ import java.security.Principal;
 public class KakaoLoginController {
     private final KakaoAuthService kakaoAuthService;
 
-    @GetMapping("/kakao")
-    public User login(Principal principal) {
-        return kakaoAuthService.kakaoLogin(principal);
-    }
 }
