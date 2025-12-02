@@ -30,26 +30,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_provider_id", nullable = false, unique = true)
-    private Long providerId;
-
-    @Column(name = "user_email",  nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "user_nickname", nullable = false, unique = true)
+    @Column(nullable = false)
     private String nickname;
 
-    @Column(name = "user_profile_image", nullable = false, unique = true)
-    private String profileImage;
-
-    @Column(name = "user_thumbnail_image", nullable = false, unique = true)
-    private String thumbnailImageUrl;
-
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Provider provider;
+
+    @Column(nullable = false)
+    private String providerId;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -58,25 +54,19 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Column(length = 500)
-    private String accessToken;
-
-    @Column(length = 500)
     private String refreshToken;
 
-    public void saveToken(String accessToken, String refreshToken) {
-        this.accessToken = accessToken;
+    public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 
     @Builder
-    public User(Long id, Long providerId, String email, String nickname, String profileImage, Role role, Provider provider, String thumbnailImageUrl) {
-        this.id = id;
-        this.providerId = providerId;
+    public User(String email, String nickname, Role role, Provider provider, String providerId) {
         this.email = email;
         this.nickname = nickname;
-        this.profileImage = profileImage;
         this.role = role;
         this.provider = provider;
-        this.thumbnailImageUrl = thumbnailImageUrl;
+        this.providerId = providerId;
     }
+
 }
