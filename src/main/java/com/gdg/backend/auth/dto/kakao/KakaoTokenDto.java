@@ -18,21 +18,20 @@ public class KakaoTokenDto {
     private String idToken;
 
     @JsonProperty("expires_in")
-    private Long expiresIn;
+    private Integer expiresIn;
 
     @JsonProperty("refresh_token")
     private String refreshToken;
 
     @JsonProperty("refresh_token_expires_in")
-    private Long refreshTokenExpiresIn;
+    private Integer refreshTokenExpiresIn;
 
     @JsonProperty("scope")
     private String scope;
 
     @Builder
-    public KakaoTokenDto(String tokenType, String accessToken, String idToken, Long expiresIn, String refreshToken, Long refreshTokenExpiresIn, String scope) {
+    public KakaoTokenDto(String tokenType, String idToken, Integer expiresIn, String refreshToken, Integer refreshTokenExpiresIn, String scope){
         this.tokenType = tokenType;
-        this.accessToken = accessToken;
         this.idToken = idToken;
         this.expiresIn = expiresIn;
         this.refreshToken = refreshToken;
