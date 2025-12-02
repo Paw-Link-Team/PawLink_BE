@@ -30,8 +30,9 @@ public class KakaoTokenDto {
     private String scope;
 
     @Builder
-    public KakaoTokenDto(String tokenType, String idToken, Integer expiresIn, String refreshToken, Integer refreshTokenExpiresIn, String scope){
+    public KakaoTokenDto(String tokenType, String accessToken, String idToken, Integer expiresIn, String refreshToken, Integer refreshTokenExpiresIn, String scope){
         this.tokenType = tokenType;
+        this.accessToken = accessToken;
         this.idToken = idToken;
         this.expiresIn = expiresIn;
         this.refreshToken = refreshToken;
