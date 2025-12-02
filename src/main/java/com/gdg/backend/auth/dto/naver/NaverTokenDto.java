@@ -1,6 +1,7 @@
 package com.gdg.backend.auth.dto.naver;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,14 @@ public class NaverTokenDto {
 
     @JsonProperty("error_description")
     private String errorDescription;
+
+    @Builder
+    public NaverTokenDto(String accessToken, String refreshToken, String tokenType, Integer expiresIn, String error, String errorDescription) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.tokenType = tokenType;
+        this.expiresIn = expiresIn;
+        this.error = error;
+        this.errorDescription = errorDescription;
+    }
 }
