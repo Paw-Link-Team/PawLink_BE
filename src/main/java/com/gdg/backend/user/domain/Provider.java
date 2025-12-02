@@ -2,5 +2,5 @@ package com.gdg.backend.user.domain;
 
 public enum Provider {
     KAKAO,
-    APPLE,
+    NAVER,
 }
