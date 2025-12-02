@@ -1,14 +1,15 @@
 package com.gdg.backend.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gdg.backend.auth.dto.kakao.KakaoTokenDto;
+import com.gdg.backend.auth.dto.kakao.KakaoUserResponseDto;
 import com.gdg.backend.user.domain.Provider;
 import com.gdg.backend.user.domain.Role;
 import com.gdg.backend.user.domain.User;
 import com.gdg.backend.global.exception.BedReqeustException;
 import com.gdg.backend.global.exception.UserNotFoundException;
 import com.gdg.backend.global.jwt.TokenProvider;
-import com.gdg.backend.auth.dto.kakao.KakaoTokenDto;
-import com.gdg.backend.auth.dto.kakao.KakaoUserDto;
+import com.gdg.backend.user.dto.TokenDto;
 import com.gdg.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +25,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.security.Principal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +48,9 @@ public class KakaoAuthService {
 
     @Value("${kakao.client-secret}")
     private String clientSecret;
+
+    @Value("${kakao.scope}")
+    private List<String> scope;
 
     public String getKakaoToken(String code){
         RestTemplate restTemplate = new RestTemplate();
@@ -72,7 +76,7 @@ public class KakaoAuthService {
             try {
                 ObjectMapper mapper = new ObjectMapper();
 
-                KakaoTokenDto dto = mapper.readValue(json, KakaoTokenDto.class);
+                TokenDto dto = mapper.readValue(json, TokenDto.class);
 
                 return dto.getAccessToken();
             } catch (Exception e) {
@@ -83,7 +87,7 @@ public class KakaoAuthService {
     }
 
     public KakaoTokenDto loginOrSignUp(String getKakaoToken, Role role) {
-        KakaoUserDto kakaoUserDto = getKakaoUser(getKakaoToken);
+        KakaoUserResponseDto kakaoUserDto = getKakaoUser(getKakaoToken);
 
         if ((kakaoUserDto.getKakaoAccount() == null || kakaoUserDto.getKakaoAccount().getProfile() == null
                 || kakaoUserDto.getKakaoAccount().getEmail() == null)
@@ -95,25 +99,35 @@ public class KakaoAuthService {
 
         userRepository.save(user);
 
-        return tokenProvider.createToken(user, getKakaoToken); //getKakaoToken은 idToken임
+        String accessToken = tokenProvider.accessToken(user);
+        String refreshToken = tokenProvider.refreshToken(user);
+
+        String joinScope = String.join(" ", scope);
+
+        return KakaoTokenDto.builder()
+                .tokenType("Bearer ")
+                .accessToken(accessToken)
+                .idToken(getKakaoToken)
+                .expiresIn(tokenProvider.getAccessTokenValiditySeconds()/1000)
+                .refreshToken(refreshToken)
+                .refreshTokenExpiresIn(tokenProvider.getRefreshTokenValiditySeconds()/1000)
+                .scope(joinScope)
+                .build();
     }
 
-    private User saveUser(KakaoUserDto kakaoUserDto, Role role) {
+    private User saveUser(KakaoUserResponseDto kakaoUserDto, Role role) {
         return userRepository.findByEmail(kakaoUserDto.getKakaoAccount().getEmail())
-                .orElseGet(() ->userRepository.save(User.builder()
-                .email(kakaoUserDto.getKakaoAccount().getEmail())
-                .nickname(kakaoUserDto.getKakaoAccount().getProfile().getNickname())
-                .profileImage(kakaoUserDto.getKakaoAccount().getProfile().getProfileImageUrl())
-                .thumbnailImageUrl(kakaoUserDto.getKakaoAccount().getProfile().getThumbnailImageUrl())
-                .role(role)
-                .provider(Provider.KAKAO)
-                .providerId(kakaoUserDto.getId())
-                .build()
-                )
-        );
+                .orElseGet(() -> userRepository.save(User.builder()
+                        .email(kakaoUserDto.getKakaoAccount().getEmail())
+                        .nickname(kakaoUserDto.getKakaoAccount().getProfile().getNickname())
+                        .role(role)
+                        .provider(Provider.KAKAO)
+                        .providerId(kakaoUserDto.getId().toString())
+                        .build()
+                ));
     }
 
-    private KakaoUserDto getKakaoUser(String accessToken){
+    private KakaoUserResponseDto getKakaoUser(String accessToken){
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -122,24 +136,18 @@ public class KakaoAuthService {
 
         RequestEntity<Void> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, URI.create(KAKAO_USERINFO_URI));
         ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
+
         if(response.getStatusCode().is2xxSuccessful()){
             String json = response.getBody();
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
 
-                return objectMapper.readValue(json, KakaoUserDto.class);
+                return objectMapper.readValue(json, KakaoUserResponseDto.class);
             } catch (Exception e) {
                 throw new UserNotFoundException("유저 정보를 가져오는데 실패했습니다.");
             }
         }
 
         throw new UserNotFoundException("유저 정보를 가져오는데 실패했습니다.");
-    }
-
-    public User kakaoLogin(Principal principal) {
-        Long id = Long.parseLong(principal.getName());
-
-        return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
     }
 }
