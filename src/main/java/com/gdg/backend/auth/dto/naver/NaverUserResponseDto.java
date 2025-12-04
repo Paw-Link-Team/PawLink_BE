@@ -2,11 +2,12 @@ package com.gdg.backend.auth.dto.naver;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NaverUserResponseDto {
     @JsonProperty("resultcode")
@@ -19,7 +20,8 @@ public class NaverUserResponseDto {
     private Response response;
 
     @Getter
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PUBLIC)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Response {
         @JsonProperty("id")
         private String id;
