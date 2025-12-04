@@ -19,12 +19,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +48,8 @@ public class NaverAuthService {
     @Value("${naver.user-info-uri}")
     private String userInfoUri;
 
-    public String getNaverToken(String code, String state) {
+    @Transactional
+    public String getNaverAccessToken(String code, String state) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -72,7 +73,6 @@ public class NaverAuthService {
                 ObjectMapper mapper = new ObjectMapper();
 
                 NaverTokenDto dto = mapper.readValue(json, NaverTokenDto.class);
-
                 return dto.getAccessToken();
             } catch (Exception e) {
                 throw new BedReqeustException("네이버 토큰 파싱을 실패했습니다.\nerror message: " + e.getMessage());
@@ -81,16 +81,28 @@ public class NaverAuthService {
         throw new BedReqeustException("네이버 토큰 값을 가져온는데 실패했습니다.");
     }
 
-    public NaverTokenDto naverLoginOrSignUp(String getNaverToken, Role role) {
+    @Transactional
+    public NaverTokenDto naverLoginOrSignUp(String getNaverToken) {
         NaverUserResponseDto naverUserResponseDto = getNaverUser(getNaverToken);
 
         if (naverUserResponseDto == null || naverUserResponseDto.getResponse().getEmail() == null) {
-            throw new UserNotFoundException("유저 정보가 없습니다.");
+            throw new UserNotFoundException("네이버 계정 이메일을 확인할 수 없습니다..");
         }
 
-        User user = saveUser(naverUserResponseDto, role);
+        String email = naverUserResponseDto.getResponse().getEmail();
+        User user = userRepository.findByEmail(email).orElse(null);
 
-        userRepository.save(user);
+        if(user == null) {
+            user = User.builder()
+                    .email(email)
+                    .nickname(naverUserResponseDto.getResponse().getNickname())
+                    .provider(Provider.NAVER)
+                    .providerId(naverUserResponseDto.getResponse().getId())
+                    .role(Role.WALKER)
+                    .build();
+
+            userRepository.save(user);
+        }
 
         String accessToken = tokenProvider.accessToken(user);
         String refreshToken = tokenProvider.refreshToken(user);
@@ -105,19 +117,6 @@ public class NaverAuthService {
                 .build();
     }
 
-    private User saveUser(NaverUserResponseDto naverUserResponseDto, Role role) {
-        return userRepository.findByEmail(naverUserResponseDto.getResponse().getEmail())
-                .orElseGet(() ->userRepository.save(User.builder()
-                                .email(naverUserResponseDto.getResponse().getEmail())
-                                .nickname(naverUserResponseDto.getResponse().getNickname())
-                                .role(role)
-                                .provider(Provider.NAVER)
-                                .providerId(naverUserResponseDto.getResponse().getId())
-                                .build()
-                        )
-                );
-    }
-
     private NaverUserResponseDto getNaverUser(String accessToken){
         RestTemplate restTemplate = new RestTemplate();
 
@@ -129,7 +128,6 @@ public class NaverAuthService {
         ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
         if(response.getStatusCode().is2xxSuccessful()){
             String json = response.getBody();
-            System.out.print("response: " + json);
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
 
