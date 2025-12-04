@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -52,6 +53,7 @@ public class KakaoAuthService {
     @Value("${kakao.scope}")
     private List<String> scope;
 
+    @Transactional
     public String getKakaoToken(String code){
         RestTemplate restTemplate = new RestTemplate();
 
@@ -86,6 +88,7 @@ public class KakaoAuthService {
         throw new BedReqeustException("카카오 토큰 값을 가져온는데 실패했습니다.");
     }
 
+    @Transactional
     public KakaoTokenDto loginOrSignUp(String getKakaoToken, Role role) {
         KakaoUserResponseDto kakaoUserDto = getKakaoUser(getKakaoToken);
 
@@ -96,8 +99,6 @@ public class KakaoAuthService {
         }
 
         User user = saveUser(kakaoUserDto, role);
-
-        userRepository.save(user);
 
         String accessToken = tokenProvider.accessToken(user);
         String refreshToken = tokenProvider.refreshToken(user);
@@ -116,7 +117,7 @@ public class KakaoAuthService {
     }
 
     private User saveUser(KakaoUserResponseDto kakaoUserDto, Role role) {
-        return userRepository.findByEmail(kakaoUserDto.getKakaoAccount().getEmail())
+        User user = userRepository.findByEmail(kakaoUserDto.getKakaoAccount().getEmail())
                 .orElseGet(() -> userRepository.save(User.builder()
                         .email(kakaoUserDto.getKakaoAccount().getEmail())
                         .nickname(kakaoUserDto.getKakaoAccount().getProfile().getNickname())
@@ -125,6 +126,7 @@ public class KakaoAuthService {
                         .providerId(kakaoUserDto.getId().toString())
                         .build()
                 ));
+        return userRepository.save(user);
     }
 
     private KakaoUserResponseDto getKakaoUser(String accessToken){
