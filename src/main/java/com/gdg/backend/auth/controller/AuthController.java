@@ -7,7 +7,6 @@ import com.gdg.backend.global.exception.BedReqeustException;
 import com.gdg.backend.user.domain.Role;
 import com.gdg.backend.auth.service.KakaoAuthService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,17 +32,13 @@ public class AuthController {
         return kakaoAuthService.loginOrSignUp(token, role);
     }
 
-    @Operation(summary = "네이버 로그인", description = "")
+    @Operation(summary = "네이버 로그인", description = "네이버는 현재 역할 분배를 못합니다. 해결해보겠습니다.")
     @GetMapping("/callback/naver")
     public NaverTokenDto naverLogin(@RequestParam("code") String code,
-                                    @RequestParam("state") String state
-                                    ){
+                                    @RequestParam("state") String state){
+        String token = naverAuthService.getNaverAccessToken(code, state);
 
-        String token = naverAuthService.getNaverToken(code, state);
-
-        //Role role = Role.valueOf(part.toUpperCase());
-
-        return naverAuthService.naverLoginOrSignUp(token, Role.ADMIN);
+        return naverAuthService.naverLoginOrSignUp(token);
     }
 
 
