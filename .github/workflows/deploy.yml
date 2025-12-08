@@ -45,5 +45,20 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            export GHCR_USERNAME=${{ secrets.GHCR_USERNAME }}
+            export GHCR_TOKEN=${{ secrets.GHCR_TOKEN }}
+            export DB_URL=${{ secrets.DB_URL }}
+            export DB_USER_NAME=${{ secrets.DB_USER_NAME }}
+            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            export JWT_SECRET=${{ secrets.JWT_SECRET }}
+            export ACCESS_TOKEN_VALIDITY_IN_MILLISECONDS=${{ secrets.ACCESS_TOKEN_VALIDITY_IN_MILLISECONDS }}
+            export REFRESH_TOKEN_VALIDITY_IN_MILLISECONDS=${{ secrets.REFRESH_TOKEN_VALIDITY_IN_MILLISECONDS }}
+            export KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
+            export KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
+            export KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}
+            export NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}
+            export NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}
+            export NAVER_REDIRECT_URI=${{ secrets.NAVER_REDIRECT_URI }}
+            
             chmod +x /home/ubuntu/app/deploy.sh
             /home/ubuntu/app/deploy.sh
