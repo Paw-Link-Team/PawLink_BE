@@ -45,6 +45,6 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            
             chmod +x /home/ubuntu/app/deploy.sh
             /home/ubuntu/app/deploy.sh
+            bash -lc "/home/ubuntu/app/deploy.sh"
