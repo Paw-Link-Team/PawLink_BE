@@ -39,12 +39,14 @@ jobs:
           docker push ghcr.io/paw-link-team/pawlink_be:latest
 
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.6
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
           script: |
-            bash -lc "chmod +x /home/ubuntu/app/deploy.sh && /home/ubuntu/app/deploy.sh"
+            chmod +x /home/ubuntu/app/deploy.sh
+            /home/ubuntu/app/deploy.sh
+      
+      
       
