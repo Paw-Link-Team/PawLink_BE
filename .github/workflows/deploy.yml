@@ -47,6 +47,9 @@ jobs:
           script: |
             chmod +x /home/ubuntu/app/deploy.sh
             /home/ubuntu/app/deploy.sh
+        env:
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
       
       
       
