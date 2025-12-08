@@ -46,10 +46,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             chmod +x /home/ubuntu/app/deploy.sh
+            export GHCR_USERNAME=${{ secrets.GHCR_USERNAME }}
+            export GHCR_TOKEN=${{ secrets.GHCR_TOKEN }}
             /home/ubuntu/app/deploy.sh
-        env:
-          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
       
       
       
