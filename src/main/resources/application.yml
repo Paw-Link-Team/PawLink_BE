@@ -14,6 +14,9 @@ spring:
         show-sql: true
         format_sql: false
         use_sql_comments: true
+    swagger-ui:
+      url: /v3/api-docs
+      path: /swagger-ui.html
 
 jwt:
   secret: ${JWT_SECRET}
@@ -39,5 +42,5 @@ naver:
   scope: email, nickname
 
 server:
-  forward-headers-strategy: native
+  forward-headers-strategy: framework
 
