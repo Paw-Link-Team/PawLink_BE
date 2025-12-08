@@ -44,7 +44,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
           script: |
-            chmod +x /home/ubuntu/app/deploy.sh
-            /home/ubuntu/app/deploy.sh
-            bash -lc "/home/ubuntu/app/deploy.sh"
+            bash -lc "chmod +x /home/ubuntu/app/deploy.sh && /home/ubuntu/app/deploy.sh"
+      
