@@ -47,6 +47,9 @@ public class User {
     @Column(nullable = false)
     private String providerId;
 
+    @Column(nullable = false)
+    private String profileImageUrl;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -61,12 +64,13 @@ public class User {
     }
 
     @Builder
-    public User(String email, String nickname, Role role, Provider provider, String providerId) {
+    public User(String email, String nickname, Role role, Provider provider, String providerId, String profileImageUrl) {
         this.email = email;
         this.nickname = nickname;
         this.role = role;
         this.provider = provider;
         this.providerId = providerId;
+        this.profileImageUrl = profileImageUrl;
     }
 
 }

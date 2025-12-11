@@ -1,8 +1,8 @@
 package com.gdg.backend.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gdg.backend.auth.dto.kakao.KakaoTokenDto;
-import com.gdg.backend.auth.dto.kakao.KakaoUserResponseDto;
+import com.gdg.backend.global.oauth.dto.provider.KakaoTokenDto;
+import com.gdg.backend.global.oauth.dto.provider.KakaoUserResponseDto;
 import com.gdg.backend.global.exception.BedReqeustException;
 import com.gdg.backend.global.exception.UserNotFoundException;
 import com.gdg.backend.global.jwt.TokenProvider;

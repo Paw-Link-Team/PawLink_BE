@@ -1,9 +1,8 @@
 package com.gdg.backend.auth.controller;
 
-import com.gdg.backend.auth.dto.kakao.KakaoTokenDto;
-import com.gdg.backend.auth.dto.naver.NaverTokenDto;
+import com.gdg.backend.global.oauth.dto.provider.KakaoTokenDto;
+import com.gdg.backend.global.oauth.dto.provider.NaverTokenDto;
 import com.gdg.backend.auth.service.NaverAuthService;
-import com.gdg.backend.global.exception.BedReqeustException;
 import com.gdg.backend.user.domain.Role;
 import com.gdg.backend.auth.service.KakaoAuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/aut")
 @RequiredArgsConstructor
 public class AuthController {
 

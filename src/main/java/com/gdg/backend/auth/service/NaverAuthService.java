@@ -1,8 +1,8 @@
 package com.gdg.backend.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gdg.backend.auth.dto.naver.NaverTokenDto;
-import com.gdg.backend.auth.dto.naver.NaverUserResponseDto;
+import com.gdg.backend.global.oauth.dto.provider.NaverTokenDto;
+import com.gdg.backend.global.oauth.dto.provider.NaverUserResponseDto;
 import com.gdg.backend.global.exception.BedReqeustException;
 import com.gdg.backend.global.exception.UserNotFoundException;
 import com.gdg.backend.global.jwt.TokenProvider;
