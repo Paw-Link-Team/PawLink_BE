@@ -1,6 +1,7 @@
 package com.gdg.backend.user.dto;
 
 import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,9 +16,10 @@ public class TokenResponseDto {
     private String nickname;
     private String profileImageUrl;
     private Provider provider;
+    private Role role;
 
     @Builder
-    public TokenResponseDto(String accessToken, String refreshToken, Long userId, String email, String nickname, String profileImageUrl, Provider provider) {
+    public TokenResponseDto(String accessToken, String refreshToken, Long userId, String email, String nickname, String profileImageUrl, Provider provider, Role role) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.userId = userId;
@@ -25,5 +27,6 @@ public class TokenResponseDto {
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.provider = provider;
+        this.role = role;
     }
 }

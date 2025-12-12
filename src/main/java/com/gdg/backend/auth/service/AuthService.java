@@ -38,6 +38,7 @@ public class AuthService {
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImageUrl())
                 .provider(provider)
+                .role(role)
                 .build();
     }
 

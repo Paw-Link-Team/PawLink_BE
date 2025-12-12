@@ -50,5 +50,19 @@ public class ApiResponse<T> {
                         .build());
     }
 
+    public static <T> ResponseEntity<ApiResponse<T>> error(int status, String message) {
+        return error(status, message, 0);
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> error(int status, String message, int code) {
+        return ResponseEntity.status(status)
+                .body(ApiResponse.<T>builder()
+                        .code(code)
+                        .message(message)
+                        .success(false)
+                        .status(HttpStatus.valueOf(status))
+                        .data(null)
+                        .build());
+    }
 
 }

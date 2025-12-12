@@ -63,7 +63,7 @@ public class KakaoOauthService extends SocialOauthService {
                     .attributes(userDto)
                     .build();
         } catch (Exception e) {
-            throw new BedReqeustException("카카오 토큰 파싱을 실패했습니다.\nerror message: " + e.getMessage());
+            throw new BedReqeustException("카카오 토큰 파싱을 실패했습니다.");
         }
 
     }
