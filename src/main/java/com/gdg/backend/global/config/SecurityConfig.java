@@ -36,10 +36,10 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(
-                                "/api/**"
+                                "/api/auth/**"
                                 ,"/swagger-ui/**"
                                 ,"/v3/**"
-                                ,"/userinfo/*"
+                                ,"/login"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

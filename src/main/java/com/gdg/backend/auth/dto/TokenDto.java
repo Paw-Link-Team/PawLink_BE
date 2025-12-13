@@ -1,4 +1,4 @@
-package com.gdg.backend.user.dto;
+package com.gdg.backend.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

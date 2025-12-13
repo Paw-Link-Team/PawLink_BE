@@ -1,5 +1,6 @@
 package com.gdg.backend.global.jwt;
 
+import com.gdg.backend.global.security.UserPrincipal;
 import com.gdg.backend.user.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -12,6 +13,7 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +29,7 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class TokenProvider {
     private final Key key;
     @Getter
@@ -41,6 +44,8 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenValiditySeconds = accessTokenValiditySeconds;
         this.refreshTokenValiditySeconds = refreshTokenValiditySeconds;
+        log.info("JWT SECRET RAW = {}", secretKey);
+        log.info("JWT SECRET DECODED LENGTH = {}", Decoders.BASE64.decode(secretKey).length);
     }
 
     public String createToken(User user, Integer seconds) {
@@ -71,11 +76,22 @@ public class TokenProvider {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
 
+        String role = claims.get("role").toString();
+
         Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get("role").toString().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        return new UsernamePasswordAuthenticationToken(claims.getSubject(), "", authorities);
+        UserPrincipal principal = new UserPrincipal(
+                Long.valueOf(claims.getSubject()),
+                role
+        );
+
+        return new UsernamePasswordAuthenticationToken(
+                principal,
+                null,
+                authorities
+        );
     }
 
     public String revokeToken(HttpServletRequest request) {

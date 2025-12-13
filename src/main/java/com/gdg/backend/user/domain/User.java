@@ -44,6 +44,10 @@ public class User {
     @Column(nullable = false)
     private Provider provider;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Type type;
+
     @Column(nullable = false)
     private String providerId;
 
@@ -63,8 +67,19 @@ public class User {
         this.refreshToken = refreshToken;
     }
 
+    public void updateProfile(String nickname, String profileImageUrl) {
+        if (nickname != null) this.nickname = nickname;
+        if (profileImageUrl != null) this.profileImageUrl = profileImageUrl;
+        this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updateType(Type type) {
+        this.type = type;
+    }
+
     @Builder
-    public User(String email, String nickname, Role role, Provider provider, String providerId, String profileImageUrl) {
+    public User(String email, String nickname, Role role, Type type, Provider provider, String providerId, String profileImageUrl) {
         this.email = email;
         this.nickname = nickname;
         this.role = role;
@@ -72,5 +87,6 @@ public class User {
         this.providerId = providerId;
         this.profileImageUrl = profileImageUrl;
     }
+
 
 }
