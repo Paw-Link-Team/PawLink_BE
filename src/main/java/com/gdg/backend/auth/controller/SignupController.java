@@ -37,7 +37,7 @@ public class SignupController {
     }
 
     @Operation(summary = "관리자 회원가입", description = "관리자 회원가입입니다.")
-    @PostMapping("admin")
+    @PostMapping("/admin")
     public ResponseEntity<ApiResponse<TokenResponseDto>> admin(
             @RequestBody SignupRequest request
     ){
