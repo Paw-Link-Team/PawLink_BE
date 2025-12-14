@@ -42,7 +42,7 @@ public class UserController {
 
     @Operation(summary = "정보 변경", description = "Token을 이용하여 이름, 프로필, 타입을 변경할 수 있습니다.")
     @PatchMapping("/update")
-    public ResponseEntity<ApiResponse<Void>> updateMyInfo(
+    public ResponseEntity<ApiResponse<Object>> updateMyInfo(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody UserUpdateRequestDto request
             ){
@@ -53,7 +53,7 @@ public class UserController {
 
     @Operation(summary = "회원탈퇴", description = "탈퇴하는 api입니다.")
     @DeleteMapping("/delete")
-    public void deleteUser(
+    public ResponseEntity<ApiResponse<Object>> deleteUser(
             Authentication authentication
     ) {
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
@@ -61,5 +61,6 @@ public class UserController {
         Long userId = principal.userId();
 
         userService.deleteUser(userId);
+        return ApiResponse.success(SuccessCode.USER_DELETE);
     }
 }

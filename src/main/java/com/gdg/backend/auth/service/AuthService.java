@@ -37,6 +37,7 @@ public class AuthService {
                 .profileImageUrl(user.getProfileImageUrl())
                 .provider(provider)
                 .role(user.getRole())
+                .type(user.getType())
                 .build();
     }
 
@@ -87,6 +88,7 @@ public class AuthService {
                 .profileImageUrl(user.getProfileImageUrl())
                 .provider(user.getProvider())
                 .role(user.getRole())
+                .type(user.getType())
                 .build();
     }
 

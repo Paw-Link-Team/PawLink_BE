@@ -45,7 +45,7 @@ public class User {
     private Provider provider;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Type type;
 
     @Column(nullable = false)
@@ -70,8 +70,6 @@ public class User {
     public void updateProfile(String nickname, String profileImageUrl) {
         if (nickname != null) this.nickname = nickname;
         if (profileImageUrl != null) this.profileImageUrl = profileImageUrl;
-        this.nickname = nickname;
-        this.profileImageUrl = profileImageUrl;
     }
 
     public void updateType(Type type) {
@@ -79,10 +77,17 @@ public class User {
     }
 
     @Builder
-    public User(String email, String nickname, Role role, Type type, Provider provider, String providerId, String profileImageUrl) {
+    public User(String email,
+                String nickname,
+                Role role,
+                Type type,
+                Provider provider,
+                String providerId,
+                String profileImageUrl) {
         this.email = email;
         this.nickname = nickname;
         this.role = role;
+        this.type = type;
         this.provider = provider;
         this.providerId = providerId;
         this.profileImageUrl = profileImageUrl;

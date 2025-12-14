@@ -15,6 +15,7 @@ public enum ErrorCode {
     INVALID_FORMAT(20003, HttpStatus.BAD_REQUEST, "지원하지 않는 형식입니다."),
     FILE_TOO_LARGE(20004, HttpStatus.PAYLOAD_TOO_LARGE, "업로드 가능한 파일 크기를 초과했습니다."),
     TOO_MANY_REQUESTS(20005, HttpStatus.TOO_MANY_REQUESTS, "요청 횟수를 초과했습니다."),
+    INVALID_TYPE(20006, HttpStatus.BAD_REQUEST, "지원하지 않는 로그인 타입입니다."),
 
     //oauth
     OAUTH_INVALID_REQUEST(11001, HttpStatus.BAD_REQUEST, "잘못된 OAuth 요청입니다."),

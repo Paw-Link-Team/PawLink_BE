@@ -34,9 +34,11 @@ public class ApiResponse<T> {
         return success(SuccessCode.OK, data);
     }
 
-    public static ResponseEntity<ApiResponse<Void>> success(SuccessCode successCode){
+    public static ResponseEntity<ApiResponse<Object>> success(SuccessCode successCode){
         return success(successCode, null);
     }
+
+
 
     //error
     public static <T> ResponseEntity<ApiResponse<T>> error(ErrorCode errorCode) {

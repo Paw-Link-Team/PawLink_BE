@@ -27,9 +27,9 @@ public enum SuccessCode {
 
     //203
 
-    DELETE(300, HttpStatus.NO_CONTENT, "게시판 삭제가 정상적으로 처리되었습니다."),
-    USER_DELETE(301, HttpStatus.NO_CONTENT, "탈퇴 처리가 정상적으로 처리되었습니다."),
-    PET_DELETE(302, HttpStatus.NO_CONTENT, "반려동물 삭제가 정상적으로 처리되었습니다.");
+    DELETE(300, HttpStatus.OK, "게시판 삭제가 정상적으로 처리되었습니다."),
+    USER_DELETE(301, HttpStatus.OK, "탈퇴 처리가 정상적으로 처리되었습니다."),
+    PET_DELETE(302, HttpStatus.OK, "반려동물 삭제가 정상적으로 처리되었습니다.");
 
     private final int code;
     private final HttpStatus status;

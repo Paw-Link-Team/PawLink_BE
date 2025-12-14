@@ -8,7 +8,6 @@ import com.gdg.backend.user.dto.UserInfoResponseDto;
 import com.gdg.backend.user.dto.UserUpdateRequestDto;
 import com.gdg.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.usertype.UserType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
