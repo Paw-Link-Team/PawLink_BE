@@ -12,6 +12,5 @@ public class SignupRequest {
     private String nickname;
     private String email;
     private String profileImageUrl;
-    private Role role;
     private Type type;
 }
