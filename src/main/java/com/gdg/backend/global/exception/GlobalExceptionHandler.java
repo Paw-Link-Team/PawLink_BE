@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
-        log.error("Unhandled exception occurred", e); // ⭐ 핵심
+        log.error("Unhandled exception occurred", e);
         return ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 }
