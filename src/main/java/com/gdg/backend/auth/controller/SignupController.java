@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.tags.Param;
 
 @Tag(name = "회원가입")
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/signup")
 @RequiredArgsConstructor
 @Slf4j
 public class SignupController {
@@ -30,7 +29,7 @@ public class SignupController {
 
     @Operation(summary = "소셜로그인 인증 회원가입",
             description = "신규 회원의 회원가입입니다.")
-    @PostMapping("/signup")
+    @PostMapping("/user")
     public ResponseEntity<ApiResponse<TokenResponseDto>> signup(
             @RequestBody SignupRequest request,
             @RequestParam("type") String typeStr
