@@ -45,7 +45,7 @@ public class User {
     private Provider provider;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Type type;
 
     @Column(nullable = false)
