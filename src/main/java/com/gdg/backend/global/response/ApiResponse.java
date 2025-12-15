@@ -38,8 +38,6 @@ public class ApiResponse<T> {
         return success(successCode, null);
     }
 
-
-
     //error
     public static <T> ResponseEntity<ApiResponse<T>> error(ErrorCode errorCode) {
         return ResponseEntity.status(errorCode.getStatus())
