@@ -67,7 +67,7 @@ public class AuthService {
             throw new UserAlreadyExistsException("이미 존재하는 계정입니다. 로그인을 이용해주세요.");
         }
 
-        User user = saveUser(request, Role.ADMIN, null);
+        User user = saveUser(request, Role.ADMIN, Type.ADMIN);
 
         userRepository.save(user);
 
