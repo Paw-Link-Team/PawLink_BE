@@ -41,14 +41,14 @@ public class SecurityConfig {
                                 "/api/auth/**"
                                 ,"/api/signup/user"
                                 ,"/api/login"
-                        ).permitAll()
-                        .requestMatchers(
-                                "/swagger-ui/**"
+                                ,"/swagger-ui/**"
                                 ,"/v3/api-docs/**"
                                 ,"swagger-ui.html"
-                                ,"/admin/**"
-                        ).hasAnyRole("ADMIN","SUPER_ADMIN")
-                        .requestMatchers("/internal/**").hasRole("SURER_ADMIN")
+                        ).permitAll()
+                        .requestMatchers(
+                                "/admin/**"
+                        ).hasAnyAuthority("ADMIN","SUPER_ADMIN")
+                        .requestMatchers("/internal/**").hasAuthority("SUPER_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(configurationSource()))
