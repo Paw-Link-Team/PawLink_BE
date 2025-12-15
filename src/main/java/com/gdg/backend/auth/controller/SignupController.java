@@ -32,7 +32,7 @@ public class SignupController {
     @PostMapping("/user")
     public ResponseEntity<ApiResponse<TokenResponseDto>> signup(
             @RequestBody SignupRequest request,
-            @RequestParam("type") String typeStr
+            @RequestBody String typeStr
     ) {
         Type type;
         log.info("Type string = {}", typeStr);
