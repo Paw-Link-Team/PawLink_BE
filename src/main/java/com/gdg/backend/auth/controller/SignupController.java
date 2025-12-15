@@ -31,29 +31,15 @@ public class SignupController {
             description = "신규 회원의 회원가입입니다.")
     @PostMapping("/user")
     public ResponseEntity<ApiResponse<TokenResponseDto>> signup(
-            @RequestBody SignupRequest request,
-            @RequestBody String typeStr
+            @RequestBody SignupRequest request
     ) {
-        Type type;
-        log.info("Type string = {}", typeStr);
         try{
-            type = Type.valueOf(typeStr.toUpperCase());
+            TokenResponseDto token = authService.signUp(request);
+
+            return ApiResponse.success(SuccessCode.USER_CREATED, token);
         } catch (IllegalArgumentException e) {
             return ApiResponse.error(ErrorCode.INVALID_TYPE);
         }
-
-        TokenResponseDto token = authService.signUp(request, type);
-        return ApiResponse.success(SuccessCode.USER_CREATED, token);
     }
-
-    @Operation(summary = "관리자 회원가입", description = "관리자 회원가입입니다.")
-    @PostMapping("/admin")
-    public ResponseEntity<ApiResponse<TokenResponseDto>> admin(
-            @RequestBody SignupRequest request
-    ){
-        return ApiResponse.success(SuccessCode.ADMIN_CREATED, authService.adminSignUp(request));
-    }
-
-
 }
 
