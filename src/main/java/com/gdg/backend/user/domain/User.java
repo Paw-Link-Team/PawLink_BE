@@ -1,5 +1,7 @@
 package com.gdg.backend.user.domain;
 
+import com.gdg.backend.global.oauth.dto.UserInfoDto;
+import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -76,6 +78,8 @@ public class User {
         this.type = type;
     }
 
+    public void updateRole(Role role) { this.role = role; }
+
     @Builder
     public User(String email,
                 String nickname,
@@ -91,6 +95,18 @@ public class User {
         this.provider = provider;
         this.providerId = providerId;
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public static User fromOAuth(UserInfoDto info, Type type) {
+        return User.builder()
+                .provider(info.getProvider())
+                .providerId(info.getProviderId())
+                .email(info.getEmail())
+                .nickname(info.getName())
+                .profileImageUrl(info.getProfileImageUrl())
+                .type(type)
+                .role(Role.USER)
+                .build();
     }
 
 
