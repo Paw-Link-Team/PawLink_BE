@@ -15,6 +15,10 @@ spring:
         format_sql: false
         use_sql_comments: true
 
+super-admin:
+  provider: ${SUPER_ADMIN_PROVIDER}
+  provider-id: ${SUPER_ADMIN_ID}
+
 springdoc:
   api-docs:
     path: /v3/api-docs
