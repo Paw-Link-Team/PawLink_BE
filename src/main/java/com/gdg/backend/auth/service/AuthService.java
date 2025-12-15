@@ -7,6 +7,7 @@ import com.gdg.backend.global.exception.UserNotFoundException;
 import com.gdg.backend.global.jwt.TokenProvider;
 import com.gdg.backend.user.domain.Provider;
 import com.gdg.backend.user.domain.Role;
+import com.gdg.backend.user.domain.Type;
 import com.gdg.backend.user.domain.User;
 import com.gdg.backend.user.dto.TokenResponseDto;
 import com.gdg.backend.user.repository.UserRepository;
@@ -55,6 +56,7 @@ public class AuthService {
 
         if (isSuperAdmin(request)) { //관리자 판별
             user.updateRole(Role.SUPER_ADMIN);
+            user.updateType(Type.ADMIN);
         }
 
         userRepository.save(user);
