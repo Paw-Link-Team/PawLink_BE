@@ -6,6 +6,7 @@ import com.gdg.backend.global.oauth.service.SocialOauthService;
 import com.gdg.backend.global.response.ApiResponse;
 import com.gdg.backend.user.domain.Provider;
 import com.gdg.backend.user.repository.UserRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@Tag(name = "Oauth를 이용하여 플랫폼 고유 아이디 가져오는 컨트롤러")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
