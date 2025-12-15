@@ -14,12 +14,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleUserNotFound(UserNotFoundException e) {
         log.warn("UserNotFoundException", e);
-        return ApiResponse.error(ErrorCode.USER_NOT_FOUND);
+        return ApiResponse.error(ErrorCode.USER_NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
         log.error("Unhandled exception occurred", e);
-        return ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR);
+        return ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleException(UserAlreadyExistsException e){
+        return ApiResponse.error(ErrorCode.USER_ALREADY_EXISTS);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Object>> handleIllegalArgument(IllegalArgumentException ex) {
+        return ApiResponse.error(ErrorCode.INVALID_REQUEST, ex.getMessage());
     }
 }

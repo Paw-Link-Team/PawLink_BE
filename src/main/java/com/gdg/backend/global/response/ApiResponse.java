@@ -54,6 +54,17 @@ public class ApiResponse<T> {
         return error(status, message, 0);
     }
 
+    public static <T> ResponseEntity<ApiResponse<T>> error(ErrorCode errorCode, String message) {
+        return ResponseEntity.status(errorCode.getStatus())
+                .body(ApiResponse.<T>builder()
+                        .code(errorCode.getCode())
+                        .message(message)
+                        .success(false)
+                        .status(errorCode.getStatus())
+                        .data(null)
+                        .build());
+    }
+
     public static <T> ResponseEntity<ApiResponse<T>> error(int status, String message, int code) {
         return ResponseEntity.status(status)
                 .body(ApiResponse.<T>builder()
