@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 "/admin/**"
                         ).hasAnyAuthority("ADMIN","SUPER_ADMIN")
                         .requestMatchers("/internal/**").hasAuthority("SUPER_ADMIN")
+                        .requestMatchers("/mypage/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(configurationSource()))
