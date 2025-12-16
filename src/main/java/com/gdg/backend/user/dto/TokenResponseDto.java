@@ -1,6 +1,6 @@
 package com.gdg.backend.user.dto;
 
-import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.OauthProvider;
 import com.gdg.backend.user.domain.Role;
 import com.gdg.backend.user.domain.Type;
 import lombok.Builder;
@@ -16,7 +16,7 @@ public class TokenResponseDto {
     private String email;
     private String nickname;
     private String profileImageUrl;
-    private Provider provider;
+    private OauthProvider oauthProvider;
     private Role role;
     private Type type;
 
@@ -27,7 +27,7 @@ public class TokenResponseDto {
                             String email,
                             String nickname,
                             String profileImageUrl,
-                            Provider provider,
+                            OauthProvider oauthProvider,
                             Role role,
                             Type type) {
         this.accessToken = accessToken;
@@ -36,7 +36,7 @@ public class TokenResponseDto {
         this.email = email;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
-        this.provider = provider;
+        this.oauthProvider = oauthProvider;
         this.role = role;
         this.type = type;
     }

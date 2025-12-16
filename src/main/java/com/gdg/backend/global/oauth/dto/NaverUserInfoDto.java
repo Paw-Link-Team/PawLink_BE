@@ -1,7 +1,7 @@
 package com.gdg.backend.global.oauth.dto;
 
 import com.gdg.backend.global.oauth.dto.provider.NaverUserResponseDto;
-import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.OauthProvider;
 import lombok.Builder;
 
 public class NaverUserInfoDto implements UserInfoDto{
@@ -37,8 +37,8 @@ public class NaverUserInfoDto implements UserInfoDto{
     }
 
     @Override
-    public Provider getProvider(){
-        return Provider.NAVER;
+    public OauthProvider getProvider(){
+        return OauthProvider.NAVER;
     }
 
     @Builder

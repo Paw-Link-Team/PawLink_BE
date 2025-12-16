@@ -4,7 +4,7 @@ import com.gdg.backend.global.oauth.dto.UserInfoDto;
 import com.gdg.backend.global.oauth.factory.SocialOauthServiceFactory;
 import com.gdg.backend.global.oauth.service.SocialOauthService;
 import com.gdg.backend.global.response.ApiResponse;
-import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.OauthProvider;
 import com.gdg.backend.user.repository.UserRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -33,15 +33,15 @@ public class OauthCallbackController {
             @RequestParam(value = "state", required = false) String state
     ) throws Exception {
 
-        Provider providerEnum = Provider.valueOf(provider.toUpperCase());
-        SocialOauthService oauth = serviceFactory.get(providerEnum);
+        OauthProvider oauthProviderEnum = OauthProvider.valueOf(provider.toUpperCase());
+        SocialOauthService oauth = serviceFactory.get(oauthProviderEnum);
 
-        UserInfoDto userInfo = (providerEnum == Provider.NAVER)
+        UserInfoDto userInfo = (oauthProviderEnum == OauthProvider.NAVER)
                 ? oauth.getUserInfo(code, state)
                 : oauth.getUserInfo(code);
 
         boolean exist = userRepository
-                .existsByProviderAndProviderId(userInfo.getProvider(), userInfo.getProviderId());
+                .existsByOauthProviderAndProviderId(userInfo.getProvider(), userInfo.getProviderId());
 
         if (exist) {
             return ApiResponse.success(

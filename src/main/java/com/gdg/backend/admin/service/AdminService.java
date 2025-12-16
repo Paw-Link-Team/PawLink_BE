@@ -3,7 +3,6 @@ package com.gdg.backend.admin.service;
 import com.gdg.backend.admin.dto.AdminSignupRequest;
 import com.gdg.backend.global.exception.UserNotFoundException;
 import com.gdg.backend.global.jwt.TokenProvider;
-import com.gdg.backend.user.domain.Provider;
 import com.gdg.backend.user.domain.Role;
 import com.gdg.backend.user.domain.Type;
 import com.gdg.backend.user.domain.User;
@@ -23,8 +22,8 @@ public class AdminService {
     @Transactional
     public TokenResponseDto createAdmin(AdminSignupRequest request){
 
-        User user = userRepository.findByProviderAndProviderId(
-                request.getProvider(),
+        User user = userRepository.findByOauthProviderAfterAndProviderId(
+                request.getOauthProvider(),
                 request.getProviderId()
         ).orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
 
@@ -43,7 +42,7 @@ public class AdminService {
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImageUrl())
-                .provider(user.getProvider())
+                .oauthProvider(user.getOauthProvider())
                 .role(user.getRole())
                 .type(user.getType())
                 .build();

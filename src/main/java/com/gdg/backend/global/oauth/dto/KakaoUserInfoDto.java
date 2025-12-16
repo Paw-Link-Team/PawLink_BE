@@ -1,7 +1,7 @@
 package com.gdg.backend.global.oauth.dto;
 
 import com.gdg.backend.global.oauth.dto.provider.KakaoUserResponseDto;
-import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.OauthProvider;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -39,8 +39,8 @@ public class KakaoUserInfoDto implements UserInfoDto{
     }
 
     @Override
-    public Provider getProvider(){
-        return Provider.KAKAO;
+    public OauthProvider getProvider(){
+        return OauthProvider.KAKAO;
     }
 
     @Builder

@@ -1,7 +1,7 @@
 package com.gdg.backend.global.oauth.factory;
 
 import com.gdg.backend.global.oauth.service.SocialOauthService;
-import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.OauthProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;
@@ -11,7 +11,7 @@ import java.util.Map;
 @Component
 public class SocialOauthServiceFactory {
 
-    private final Map<Provider, SocialOauthService> oauthServiceMap = new EnumMap<Provider, SocialOauthService>(Provider.class);
+    private final Map<OauthProvider, SocialOauthService> oauthServiceMap = new EnumMap<OauthProvider, SocialOauthService>(OauthProvider.class);
 
     public SocialOauthServiceFactory(List<SocialOauthService> services) {
         for (SocialOauthService service : services) {
@@ -19,8 +19,8 @@ public class SocialOauthServiceFactory {
         }
     }
 
-    public SocialOauthService get(Provider provider) {
-        return oauthServiceMap.get(provider);
+    public SocialOauthService get(OauthProvider oauthProvider) {
+        return oauthServiceMap.get(oauthProvider);
     }
 
 }

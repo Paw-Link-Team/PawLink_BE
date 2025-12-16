@@ -1,6 +1,6 @@
 package com.gdg.backend.global.config;
 
-import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.OauthProvider;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,6 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "super-admin")
 public class SuperAdminProperties {
-    Provider provider;
+    OauthProvider oauthProvider;
     String providerId;
 }

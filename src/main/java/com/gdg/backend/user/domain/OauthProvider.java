@@ -1,6 +1,6 @@
 package com.gdg.backend.user.domain;
 
-public enum Provider {
+public enum OauthProvider {
     KAKAO,
     NAVER
 }

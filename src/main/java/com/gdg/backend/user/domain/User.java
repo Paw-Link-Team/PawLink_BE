@@ -1,7 +1,6 @@
 package com.gdg.backend.user.domain;
 
 import com.gdg.backend.global.oauth.dto.UserInfoDto;
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -44,7 +43,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Provider provider;
+    private OauthProvider oauthProvider;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -85,21 +84,21 @@ public class User {
                 String nickname,
                 Role role,
                 Type type,
-                Provider provider,
+                OauthProvider oauthProvider,
                 String providerId,
                 String profileImageUrl) {
         this.email = email;
         this.nickname = nickname;
         this.role = role;
         this.type = type;
-        this.provider = provider;
+        this.oauthProvider = oauthProvider;
         this.providerId = providerId;
         this.profileImageUrl = profileImageUrl;
     }
 
     public static User fromOAuth(UserInfoDto info, Type type) {
         return User.builder()
-                .provider(info.getProvider())
+                .oauthProvider(info.getProvider())
                 .providerId(info.getProviderId())
                 .email(info.getEmail())
                 .nickname(info.getName())

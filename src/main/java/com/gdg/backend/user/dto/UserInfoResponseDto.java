@@ -1,6 +1,6 @@
 package com.gdg.backend.user.dto;
 
-import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.OauthProvider;
 import com.gdg.backend.user.domain.Role;
 import com.gdg.backend.user.domain.Type;
 import com.gdg.backend.user.domain.User;
@@ -16,7 +16,7 @@ public class UserInfoResponseDto {
     private String nickname;
     private String profileImageUrl;
     private Role role;
-    private Provider provider;
+    private OauthProvider oauthProvider;
     private Type type;
 
     @Builder
@@ -25,14 +25,14 @@ public class UserInfoResponseDto {
                                String nickname,
                                String profileImageUrl,
                                Role role,
-                               Provider provider,
+                               OauthProvider oauthProvider,
                                Type type){
         this.userId = userId;
         this.email = email;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.role = role;
-        this.provider = provider;
+        this.oauthProvider = oauthProvider;
         this.type = type;
     }
 
@@ -43,7 +43,7 @@ public class UserInfoResponseDto {
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImageUrl())
                 .role(user.getRole())
-                .provider(user.getProvider())
+                .oauthProvider(user.getOauthProvider())
                 .type(user.getType())
                 .build();
     }

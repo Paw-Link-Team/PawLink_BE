@@ -6,7 +6,7 @@ import com.gdg.backend.global.oauth.dto.NaverUserInfoDto;
 import com.gdg.backend.global.oauth.dto.UserInfoDto;
 import com.gdg.backend.global.oauth.dto.provider.NaverTokenDto;
 import com.gdg.backend.global.oauth.dto.provider.NaverUserResponseDto;
-import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.OauthProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -38,8 +38,8 @@ public class NaverOauthService extends SocialOauthService {
     private String redirectUri;
 
     @Override
-    public Provider getProviderType(){
-        return Provider.NAVER;
+    public OauthProvider getProviderType(){
+        return OauthProvider.NAVER;
     }
 
     @Override

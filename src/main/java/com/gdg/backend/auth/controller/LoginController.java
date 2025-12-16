@@ -27,7 +27,7 @@ public class LoginController {
     public ResponseEntity<ApiResponse<TokenResponseDto>> login(
             @RequestBody LoginRequest request
     ) {
-        TokenResponseDto token = authService.login(request.getProvider(), request.getProviderId());
+        TokenResponseDto token = authService.login(request.getOauthProvider(), request.getProviderId());
         return ApiResponse.success(SuccessCode.LOGIN_SUCCESS, token);
     }
 }

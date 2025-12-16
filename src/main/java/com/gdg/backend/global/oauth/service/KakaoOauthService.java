@@ -6,7 +6,7 @@ import com.gdg.backend.global.oauth.dto.KakaoUserInfoDto;
 import com.gdg.backend.global.oauth.dto.UserInfoDto;
 import com.gdg.backend.global.oauth.dto.provider.KakaoTokenDto;
 import com.gdg.backend.global.oauth.dto.provider.KakaoUserResponseDto;
-import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.OauthProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -38,8 +38,8 @@ public class KakaoOauthService extends SocialOauthService {
     private String redirectUri;
 
     @Override
-    public Provider getProviderType(){
-        return Provider.KAKAO;
+    public OauthProvider getProviderType(){
+        return OauthProvider.KAKAO;
     }
 
     @Override

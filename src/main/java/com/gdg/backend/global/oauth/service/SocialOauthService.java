@@ -2,7 +2,7 @@ package com.gdg.backend.global.oauth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gdg.backend.global.oauth.dto.UserInfoDto;
-import com.gdg.backend.user.domain.Provider;
+import com.gdg.backend.user.domain.OauthProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +25,7 @@ public abstract class SocialOauthService {
     public UserInfoDto getUserInfo(String code, String state) throws Exception {
         return  getUserInfo(code);
     };
-    public abstract Provider getProviderType();
+    public abstract OauthProvider getProviderType();
 
     protected String postForm(String uri, Map<String, String> params) {
         HttpHeaders headers = new HttpHeaders();
