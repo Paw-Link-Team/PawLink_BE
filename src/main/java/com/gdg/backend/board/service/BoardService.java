@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -35,5 +37,33 @@ public class BoardService {
                 board.getInformation(),
                 board.getDescription()
         );
+    }
+
+    public List<BoardResponseDto> findAll() {
+        return boardRepository.findAll()
+                .stream()
+                .map(board -> new BoardResponseDto(
+                        board.getId(),
+                        board.getTitle(),
+                        board.getInformation(),
+                        board.getDescription()
+                ))
+                .toList();
+    }
+
+    public void update(Long id, BoardRequestDto dto) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글 없음"));
+
+        board.setTitle(dto.getTitle());
+        board.setInformation(dto.getInformation());
+        board.setDescription(dto.getDescription());
+    }
+
+    public void delete(Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글 없음"));
+
+        boardRepository.delete(board);
     }
 }
