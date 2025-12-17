@@ -1,7 +1,10 @@
 package com.gdg.backend.global.jwt;
 
+import com.gdg.backend.global.security.SignupPrincipal;
 import com.gdg.backend.global.security.UserPrincipal;
+import com.gdg.backend.user.domain.OauthProvider;
 import com.gdg.backend.user.domain.User;
+import com.gdg.backend.user.domain.UserStatus;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -36,14 +39,17 @@ public class TokenProvider {
     private final Integer accessTokenValiditySeconds;
     @Getter
     private final Integer refreshTokenValiditySeconds;
+    private final Integer signupTokenValiditySeconds;
 
     public TokenProvider(@Value("${jwt.secret}") String secretKey,
                          @Value("${jwt.access-token-validity-in-milliseconds}") Integer accessTokenValiditySeconds,
-                         @Value("${jwt.refresh-token-validity-in-milliseconds}") Integer refreshTokenValiditySeconds) {
+                         @Value("${jwt.refresh-token-validity-in-milliseconds}") Integer refreshTokenValiditySeconds,
+                         @Value("${jwt.signup-token-validity-in-milliseconds}") Integer signupTokenValiditySeconds) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenValiditySeconds = accessTokenValiditySeconds;
         this.refreshTokenValiditySeconds = refreshTokenValiditySeconds;
+        this.signupTokenValiditySeconds =  signupTokenValiditySeconds;
         log.info("JWT SECRET RAW = {}", secretKey);
         log.info("JWT SECRET DECODED LENGTH = {}", Decoders.BASE64.decode(secretKey).length);
     }
@@ -67,6 +73,39 @@ public class TokenProvider {
 
     public String refreshToken(User user){
         return createToken(user, refreshTokenValiditySeconds);
+    }
+
+    public String idToken(OauthProvider provider, String providerId){
+        Long time = new Date().getTime();
+
+        Date expiryDate = new Date(time+signupTokenValiditySeconds);
+
+        return Jwts.builder()
+                .setSubject("OAUTH_SIGNUP")
+                .claim("provider", provider.name())
+                .claim("providerId", providerId)
+                .claim("status", UserStatus.PENDING.name())
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public SignupPrincipal parseSignupToken(String token) {
+        Claims claims = parseClaims(token);
+
+        if (!"OAUTH_SIGNUP".equals(claims.getSubject())) {
+            throw new RuntimeException("Signup Token 아님");
+        }
+
+        if (!"PENDING".equals(claims.get("status"))) {
+            throw new RuntimeException("유효하지 않은 Signup 상태");
+        }
+
+        return new SignupPrincipal(
+                OauthProvider.valueOf(claims.get("provider").toString()),
+                claims.get("providerId").toString()
+        );
     }
 
     public Authentication getAuthentication(String accessToken) {
