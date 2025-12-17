@@ -1,10 +1,9 @@
 package com.gdg.backend.auth.service;
 
-import com.gdg.backend.auth.dto.SignupRequest;
+import com.gdg.backend.auth.dto.AuthRequestDto;
 import com.gdg.backend.global.config.SuperAdminProperties;
-import com.gdg.backend.global.exception.UserAlreadyExistsException;
-import com.gdg.backend.global.exception.UserNotFoundException;
 import com.gdg.backend.global.jwt.TokenProvider;
+import com.gdg.backend.global.security.SignupPrincipal;
 import com.gdg.backend.user.domain.OauthProvider;
 import com.gdg.backend.user.domain.Role;
 import com.gdg.backend.user.domain.Type;
@@ -25,46 +24,66 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final SuperAdminProperties superAdminProperties;
 
-    @Transactional(readOnly = true)
-    public TokenResponseDto login(OauthProvider oauthProvider, String providerId) {
+    @Transactional
+    public TokenResponseDto signupOrLogin(AuthRequestDto request){
 
-        User user = userRepository.findByOauthProviderAfterAndProviderId(oauthProvider, providerId)
-                .orElseThrow(() -> new UserNotFoundException("유저가 없습니다. 회원가입 진행해주세요."));
+        SignupPrincipal principal = tokenProvider.parseSignupToken(request.getIdToken());
 
-        return TokenResponseDto.builder()
-                .accessToken(tokenProvider.accessToken(user))
-                .refreshToken(tokenProvider.refreshToken(user))
-                .userId(user.getId())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .profileImageUrl(user.getProfileImageUrl())
-                .oauthProvider(oauthProvider)
-                .role(user.getRole())
-                .type(user.getType())
-                .build();
+        OauthProvider provider = principal.provider();
+        String providerId = principal.providerId();
+
+        return userRepository
+                .findByOauthProviderAndProviderId(provider, providerId)
+                .map(this::login)
+                // 3️⃣ 없으면 회원가입
+                .orElseGet(() -> signUp(provider, providerId, request));
     }
 
-    /**
-     * 신규 회원 가입
-     */
+    public TokenResponseDto login(User user) {
+
+        return saveTokenResponse(user, tokenProvider);
+    }
+
     @Transactional
-    public TokenResponseDto signUp(SignupRequest request) {
+    protected TokenResponseDto signUp(
+            OauthProvider provider,
+            String providerId,
+            AuthRequestDto request
+    ) {
 
-        validateNotExists(request.getOauthProvider(),request.getProviderId());
+        User user = User.builder()
+                .oauthProvider(provider)
+                .providerId(providerId)
+                .email(request.getEmail())
+                .nickname(request.getNickname())
+                // 🔥 지금은 OAuth URL 그대로, 이후 S3 연동 시 여기만 수정
+                .profileImageUrl(request.getProfileImageUrl())
+                .role(Role.USER)
+                .type(request.getType())
+                .build();
 
-        User user = saveUser(request);
-
-        if (isSuperAdmin(request)) { //관리자 판별
+        // SUPER_ADMIN 판별
+        if (isSuperAdmin(provider, providerId)) {
             user.updateRole(Role.SUPER_ADMIN);
             user.updateType(Type.ADMIN);
         }
 
         userRepository.save(user);
 
+        // Refresh Token 저장
         String refreshToken = tokenProvider.refreshToken(user);
         user.updateRefreshToken(refreshToken);
 
-        return saveTokenResponse(user, tokenProvider);
+        return login(user);
+    }
+
+    /**
+     * 슈퍼 관리자 판별
+     */
+    private boolean isSuperAdmin(OauthProvider provider, String providerId) {
+
+        return provider == superAdminProperties.getOauthProvider()
+                && providerId.equals(superAdminProperties.getProviderId());
     }
 
     private TokenResponseDto saveTokenResponse(User user, TokenProvider tokenProvider){
@@ -79,38 +98,6 @@ public class AuthService {
                 .role(user.getRole())
                 .type(user.getType())
                 .build();
-    }
-
-    private void validateNotExists(OauthProvider oauthProvider, String providerId) {
-        if (userRepository.existsByOauthProviderAndProviderId(oauthProvider, providerId)) {
-            throw new UserAlreadyExistsException(
-                    "이미 존재하는 계정입니다. 로그인을 이용해주세요."
-            );
-        }
-    }
-
-    private User saveUser(SignupRequest request){
-        return User.builder()
-                .oauthProvider(request.getOauthProvider())
-                .providerId(request.getProviderId())
-                .nickname(request.getNickname())
-                .email(request.getEmail())
-                .profileImageUrl(request.getProfileImageUrl())
-                .role(Role.USER)
-                .type(request.getType())
-                .build();
-    }
-
-    private boolean isSuperAdmin(SignupRequest request) {
-        log.info("REQ provider={}, id={}",
-                request.getOauthProvider(), request.getProviderId());
-
-        log.info("CONF provider={}, id={}",
-                superAdminProperties.getOauthProvider(),
-                superAdminProperties.getProviderId());
-
-        return request.getOauthProvider() == superAdminProperties.getOauthProvider()
-                && request.getProviderId().equals(superAdminProperties.getProviderId());
     }
 
 }
