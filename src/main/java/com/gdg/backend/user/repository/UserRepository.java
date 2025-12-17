@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByOauthProviderAfterAndProviderId(OauthProvider oauthProvider, String providerId);
+    Optional<User> findByOauthProviderAndProviderId(OauthProvider oauthProvider, String providerId);
     boolean existsByOauthProviderAndProviderId(OauthProvider oauthProvider, String providerId);
 }
