@@ -1,11 +1,12 @@
 package com.gdg.backend.global.oauth.controller;
 
+import com.gdg.backend.global.jwt.TokenProvider;
+import com.gdg.backend.global.oauth.dto.IdTokenResponse;
 import com.gdg.backend.global.oauth.dto.UserInfoDto;
 import com.gdg.backend.global.oauth.factory.SocialOauthServiceFactory;
 import com.gdg.backend.global.oauth.service.SocialOauthService;
 import com.gdg.backend.global.response.ApiResponse;
 import com.gdg.backend.user.domain.OauthProvider;
-import com.gdg.backend.user.repository.UserRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +25,10 @@ import java.util.Map;
 public class OauthCallbackController {
 
     private final SocialOauthServiceFactory serviceFactory;
-    private final UserRepository userRepository;
+    private final TokenProvider tokenProvider;
 
     @GetMapping("/callback/{provider}")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> callback(
+    public ResponseEntity<ApiResponse<IdTokenResponse>> callback(
             @PathVariable String provider,
             @RequestParam("code") String code,
             @RequestParam(value = "state", required = false) String state
@@ -40,24 +41,13 @@ public class OauthCallbackController {
                 ? oauth.getUserInfo(code, state)
                 : oauth.getUserInfo(code);
 
-        boolean exist = userRepository
-                .existsByOauthProviderAndProviderId(userInfo.getProvider(), userInfo.getProviderId());
-
-        if (exist) {
-            return ApiResponse.success(
-                    Map.of(
-                            "isNewUser", false,
-                            "providerId", userInfo.getProviderId(),
-                            "provider", userInfo.getProvider().name()
-                    )
-            );
-        }
+        String idToken = tokenProvider.idToken(
+                userInfo.getProvider(),
+                userInfo.getProviderId()
+        );
 
         return ApiResponse.success(
-                Map.of(
-                        "isNewUser", true,
-                        "userInfo", userInfo
-                )
+                IdTokenResponse.of(idToken)
         );
     }
 }
