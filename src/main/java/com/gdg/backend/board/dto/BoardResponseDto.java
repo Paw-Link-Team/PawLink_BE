@@ -5,4 +5,7 @@ public class BoardResponseDto {
     private String title;
     private String information;
     private String description;
+
+    public BoardResponseDto(Long id, String title, String information, String description) {
+    }
 }
