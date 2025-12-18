@@ -5,6 +5,7 @@ import com.gdg.backend.global.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,6 +23,7 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
@@ -34,13 +36,20 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/**"
+                                "/api/auth/**"
+                                ,"/api/signup/user"
+                                ,"/auth/login"
                                 ,"/swagger-ui/**"
-                                ,"/v3/**"
-                                ,"/userinfo/*"
+                                ,"/v3/api-docs/**"
+                                ,"swagger-ui.html"
                         ).permitAll()
+                        .requestMatchers(
+                                "/admin/**"
+                        ).hasAnyAuthority("ADMIN","SUPER_ADMIN")
+                        .requestMatchers("/internal/**").hasAuthority("SUPER_ADMIN")
+                        .requestMatchers("/mypage/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(configurationSource()))

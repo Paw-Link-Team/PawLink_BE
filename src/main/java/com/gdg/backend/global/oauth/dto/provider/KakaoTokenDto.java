@@ -1,6 +1,5 @@
-package com.gdg.backend.user.dto;
+package com.gdg.backend.global.oauth.dto.provider;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,45 +7,36 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class TokenDto {
+public class KakaoTokenDto {
     @JsonProperty("token_type")
     private String tokenType;
 
     @JsonProperty("access_token")
     private String accessToken;
 
+    @JsonProperty("id_token")
+    private String idToken;
+
     @JsonProperty("expires_in")
-    private Long expiresIn;
+    private Integer expiresIn;
 
     @JsonProperty("refresh_token")
     private String refreshToken;
 
     @JsonProperty("refresh_token_expires_in")
-    private Long refreshTokenExpiresIn;
+    private Integer refreshTokenExpiresIn;
 
     @JsonProperty("scope")
     private String scope;
 
-    @JsonProperty("error")
-    private String error;
-
-    @JsonProperty("error_description")
-    private String errorDescription;
-
-    public void updateScope(String scope) {
-        this.scope = scope;
-    }
-
     @Builder
-    public TokenDto(String tokenType, String accessToken, Long expiresIn, String refreshToken, Long refreshTokenExpiresIn, String scope, String error, String errorDescription) {
+    public KakaoTokenDto(String tokenType, String accessToken, String idToken, Integer expiresIn, String refreshToken, Integer refreshTokenExpiresIn, String scope){
         this.tokenType = tokenType;
         this.accessToken = accessToken;
+        this.idToken = idToken;
         this.expiresIn = expiresIn;
         this.refreshToken = refreshToken;
         this.refreshTokenExpiresIn = refreshTokenExpiresIn;
         this.scope = scope;
-        this.error = error;
-        this.errorDescription = errorDescription;
     }
 }

@@ -1,45 +1,33 @@
 package com.gdg.backend.auth.controller;
 
-import com.gdg.backend.auth.dto.kakao.KakaoTokenDto;
-import com.gdg.backend.auth.dto.naver.NaverTokenDto;
-import com.gdg.backend.auth.service.NaverAuthService;
-import com.gdg.backend.global.exception.BedReqeustException;
-import com.gdg.backend.user.domain.Role;
-import com.gdg.backend.auth.service.KakaoAuthService;
+import com.gdg.backend.auth.dto.AuthRequestDto;
+import com.gdg.backend.auth.service.AuthService;
+import com.gdg.backend.global.code.SuccessCode;
+import com.gdg.backend.global.response.ApiResponse;
+import com.gdg.backend.user.dto.TokenResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "OIDC 로그인 및 회원가입")
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final KakaoAuthService kakaoAuthService;
-    private final NaverAuthService naverAuthService;
+    private final AuthService authService;
 
-    @Operation(summary = "카카오 로그인", description = "code : accessToken을 받습니다.\nstate : provider, walker, admin 3가지로 역할이 부여됩니다. 프론트는 제공자를 선택하게 만들어주세요.")
-    @GetMapping("/callback/kakao")
-    public KakaoTokenDto kakaoLogin(@RequestParam("code") String code,
-                                    @RequestParam("part") String part) {
-        String token = kakaoAuthService.getKakaoToken(code);
-
-        Role role = Role.valueOf(part.toUpperCase());
-
-        return kakaoAuthService.loginOrSignUp(token, role);
+    @Operation(summary = "로그인 회원가입 통합", description = "로그인 및 회원가입을 통합시켰습니다.")
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<TokenResponseDto>> signupOrLogin(
+            @RequestBody AuthRequestDto request
+            ){
+        TokenResponseDto token = authService.signupOrLogin(request);
+        return ApiResponse.success(SuccessCode.LOGIN_SUCCESS,token);
     }
-
-    @Operation(summary = "네이버 로그인", description = "네이버는 현재 역할 분배를 못합니다. 해결해보겠습니다.")
-    @GetMapping("/callback/naver")
-    public NaverTokenDto naverLogin(@RequestParam("code") String code,
-                                    @RequestParam("state") String state){
-        String token = naverAuthService.getNaverAccessToken(code, state);
-
-        return naverAuthService.naverLoginOrSignUp(token);
-    }
-
-
 }

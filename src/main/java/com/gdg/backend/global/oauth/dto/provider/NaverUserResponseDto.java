@@ -1,4 +1,4 @@
-package com.gdg.backend.auth.dto.naver;
+package com.gdg.backend.global.oauth.dto.provider;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

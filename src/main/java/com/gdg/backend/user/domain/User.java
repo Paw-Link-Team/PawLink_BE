@@ -1,5 +1,6 @@
 package com.gdg.backend.user.domain;
 
+import com.gdg.backend.global.oauth.dto.UserInfoDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -42,10 +43,17 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Provider provider;
+    private OauthProvider oauthProvider;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Type type;
 
     @Column(nullable = false)
     private String providerId;
+
+    @Column(nullable = false)
+    private String profileImageUrl;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -60,13 +68,45 @@ public class User {
         this.refreshToken = refreshToken;
     }
 
+    public void updateProfile(String nickname, String profileImageUrl) {
+        if (nickname != null) this.nickname = nickname;
+        if (profileImageUrl != null) this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updateType(Type type) {
+        this.type = type;
+    }
+
+    public void updateRole(Role role) { this.role = role; }
+
     @Builder
-    public User(String email, String nickname, Role role, Provider provider, String providerId) {
+    public User(String email,
+                String nickname,
+                Role role,
+                Type type,
+                OauthProvider oauthProvider,
+                String providerId,
+                String profileImageUrl) {
         this.email = email;
         this.nickname = nickname;
         this.role = role;
-        this.provider = provider;
+        this.type = type;
+        this.oauthProvider = oauthProvider;
         this.providerId = providerId;
+        this.profileImageUrl = profileImageUrl;
     }
+
+    public static User fromOAuth(UserInfoDto info, Type type) {
+        return User.builder()
+                .oauthProvider(info.getProvider())
+                .providerId(info.getProviderId())
+                .email(info.getEmail())
+                .nickname(info.getName())
+                .profileImageUrl(info.getProfileImageUrl())
+                .type(type)
+                .role(Role.USER)
+                .build();
+    }
+
 
 }
