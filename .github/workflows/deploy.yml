@@ -48,4 +48,4 @@ jobs:
             chmod +x /home/ubuntu/pawlink/deploy.sh
             export GHCR_USERNAME=${{ secrets.GHCR_USERNAME }}
             export GHCR_TOKEN=${{ secrets.GHCR_TOKEN }}
-            /home/ubuntu/app/deploy.sh
+            /home/ubuntu/pawlink/deploy.sh
