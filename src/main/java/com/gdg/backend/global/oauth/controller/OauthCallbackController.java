@@ -43,11 +43,14 @@ public class OauthCallbackController {
 
         String idToken = tokenProvider.idToken(
                 userInfo.getProvider(),
-                userInfo.getProviderId()
+                userInfo.getProviderId(),
+                userInfo.getEmail()
         );
 
+        String email = tokenProvider.parseSignupToken(idToken).email();
+
         return ApiResponse.success(
-                IdTokenResponse.of(idToken)
+                IdTokenResponse.of(idToken, email)
         );
     }
 }

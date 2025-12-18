@@ -75,7 +75,7 @@ public class TokenProvider {
         return createToken(user, refreshTokenValiditySeconds);
     }
 
-    public String idToken(OauthProvider provider, String providerId){
+    public String idToken(OauthProvider provider, String providerId, String email){
         Long time = new Date().getTime();
 
         Date expiryDate = new Date(time+signupTokenValiditySeconds);
@@ -84,6 +84,7 @@ public class TokenProvider {
                 .setSubject("OAUTH_SIGNUP")
                 .claim("provider", provider.name())
                 .claim("providerId", providerId)
+                .claim("email", email)
                 .claim("status", UserStatus.PENDING.name())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
@@ -104,7 +105,8 @@ public class TokenProvider {
 
         return new SignupPrincipal(
                 OauthProvider.valueOf(claims.get("provider").toString()),
-                claims.get("providerId").toString()
+                claims.get("providerId").toString(),
+                claims.get("email").toString()
         );
     }
 

@@ -10,9 +10,14 @@ import lombok.Getter;
 public class IdTokenResponse {
 
     private String idToken;
+    private String email;
 
-    public static IdTokenResponse of(String idToken){
-        return IdTokenResponse.builder().idToken(idToken).build();
+    public static IdTokenResponse of(String idToken, String email){
+
+        return IdTokenResponse.builder()
+                .idToken(idToken)
+                .email(email)
+                .build();
     }
 
 }
