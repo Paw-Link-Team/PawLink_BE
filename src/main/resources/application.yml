@@ -14,6 +14,14 @@ spring:
         show-sql: true
         format_sql: false
         use_sql_comments: true
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      s3:
+        bucket: pawlink-profile-images
+      credentials:
+        instance-profile: true
 
 super-admin:
   oauthProvider: ${SUPER_ADMIN_PROVIDER}
