@@ -6,8 +6,6 @@ import lombok.Getter;
 @Getter
 public class AuthRequestDto {
     private String idToken;
-    private String email;
     private String nickname;
-    private String profileImageUrl;
     private Type type;
 }

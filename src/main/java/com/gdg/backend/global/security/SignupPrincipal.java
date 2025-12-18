@@ -4,5 +4,6 @@ import com.gdg.backend.user.domain.OauthProvider;
 
 public record SignupPrincipal(
         OauthProvider provider,
-        String providerId
+        String providerId,
+        String email
 ) {}

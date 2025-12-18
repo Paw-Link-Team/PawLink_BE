@@ -79,6 +79,10 @@ public class User {
 
     public void updateRole(Role role) { this.role = role; }
 
+    public void updateProfileImage(String profileImageUrl){
+        this.profileImageUrl = profileImageUrl;
+    }
+
     @Builder
     public User(String email,
                 String nickname,

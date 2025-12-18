@@ -9,6 +9,7 @@ import com.gdg.backend.user.domain.Role;
 import com.gdg.backend.user.domain.Type;
 import com.gdg.backend.user.domain.User;
 import com.gdg.backend.user.dto.TokenResponseDto;
+import com.gdg.backend.user.image.profile.service.ProfileImageConstants;
 import com.gdg.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +32,13 @@ public class AuthService {
 
         OauthProvider provider = principal.provider();
         String providerId = principal.providerId();
+        String email = principal.email();
 
         return userRepository
                 .findByOauthProviderAndProviderId(provider, providerId)
                 .map(this::login)
                 // 3️⃣ 없으면 회원가입
-                .orElseGet(() -> signUp(provider, providerId, request));
+                .orElseGet(() -> signUp(provider, providerId, email, request));
     }
 
     public TokenResponseDto login(User user) {
@@ -48,16 +50,16 @@ public class AuthService {
     protected TokenResponseDto signUp(
             OauthProvider provider,
             String providerId,
+            String email,
             AuthRequestDto request
     ) {
 
         User user = User.builder()
                 .oauthProvider(provider)
                 .providerId(providerId)
-                .email(request.getEmail())
+                .email(email)
                 .nickname(request.getNickname())
-                // 🔥 지금은 OAuth URL 그대로, 이후 S3 연동 시 여기만 수정
-                .profileImageUrl(request.getProfileImageUrl())
+                .profileImageUrl(ProfileImageConstants.DEFAULT_PROFILE_IMAGE)
                 .role(Role.USER)
                 .type(request.getType())
                 .build();
