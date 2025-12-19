@@ -1,5 +1,6 @@
 package com.gdg.backend.global.oauth.controller;
 
+import com.gdg.backend.global.config.FrontendProperties;
 import com.gdg.backend.global.jwt.TokenProvider;
 import com.gdg.backend.global.oauth.dto.IdTokenResponse;
 import com.gdg.backend.global.oauth.dto.UserInfoDto;
@@ -8,7 +9,9 @@ import com.gdg.backend.global.oauth.service.SocialOauthService;
 import com.gdg.backend.global.response.ApiResponse;
 import com.gdg.backend.user.domain.OauthProvider;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,42 +19,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 
 @Tag(name = "Oauth를 이용하여 플랫폼 고유 아이디 가져오는 컨트롤러")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class OauthCallbackController {
 
     private final SocialOauthServiceFactory serviceFactory;
     private final TokenProvider tokenProvider;
+    private final FrontendProperties frontendProperties;
 
     @GetMapping("/callback/{provider}")
-    public ResponseEntity<ApiResponse<IdTokenResponse>> callback(
+    public void callback(
             @PathVariable String provider,
             @RequestParam("code") String code,
-            @RequestParam(value = "state", required = false) String state
+            @RequestParam(value = "state", required = false) String state,
+            HttpServletResponse response
     ) throws Exception {
+        try {
+            OauthProvider oauthProviderEnum = OauthProvider.valueOf(provider.toUpperCase());
+            SocialOauthService oauth = serviceFactory.get(oauthProviderEnum);
 
-        OauthProvider oauthProviderEnum = OauthProvider.valueOf(provider.toUpperCase());
-        SocialOauthService oauth = serviceFactory.get(oauthProviderEnum);
+            UserInfoDto userInfo = (oauthProviderEnum == OauthProvider.NAVER)
+                    ? oauth.getUserInfo(code, state)
+                    : oauth.getUserInfo(code);
 
-        UserInfoDto userInfo = (oauthProviderEnum == OauthProvider.NAVER)
-                ? oauth.getUserInfo(code, state)
-                : oauth.getUserInfo(code);
+            String idToken = tokenProvider.idToken(
+                    userInfo.getProvider(),
+                    userInfo.getProviderId(),
+                    userInfo.getEmail()
+            );
 
-        String idToken = tokenProvider.idToken(
-                userInfo.getProvider(),
-                userInfo.getProviderId(),
-                userInfo.getEmail()
-        );
+            String redirect =
+                    frontendProperties.getRedirectUrl()
+                            + "?idToken=" + URLEncoder.encode(idToken, StandardCharsets.UTF_8);
 
-        String email = tokenProvider.parseSignupToken(idToken).email();
+            response.sendRedirect(redirect);
 
-        return ApiResponse.success(
-                IdTokenResponse.of(idToken, email)
-        );
+        } catch (Exception e) {
+            log.error("OAuth callback failed", e);
+
+            String errorRedirect =
+                    frontendProperties.getRedirectUrl()
+                            + "?error=OAUTH_FAILED";
+
+            response.sendRedirect(errorRedirect);
+        }
     }
 }
 
