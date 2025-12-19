@@ -36,15 +36,15 @@ import java.util.stream.Collectors;
 public class TokenProvider {
     private final Key key;
     @Getter
-    private final Integer accessTokenValiditySeconds;
+    private final long accessTokenValiditySeconds;
     @Getter
-    private final Integer refreshTokenValiditySeconds;
-    private final Integer signupTokenValiditySeconds;
+    private final long refreshTokenValiditySeconds;
+    private final long signupTokenValiditySeconds;
 
     public TokenProvider(@Value("${jwt.secret}") String secretKey,
-                         @Value("${jwt.access-token-validity-in-milliseconds}") Integer accessTokenValiditySeconds,
-                         @Value("${jwt.refresh-token-validity-in-milliseconds}") Integer refreshTokenValiditySeconds,
-                         @Value("${jwt.signup-token-validity-in-milliseconds}") Integer signupTokenValiditySeconds) {
+                         @Value("${jwt.access-token-validity-in-milliseconds}") long accessTokenValiditySeconds,
+                         @Value("${jwt.refresh-token-validity-in-milliseconds}") long refreshTokenValiditySeconds,
+                         @Value("${jwt.signup-token-validity-in-milliseconds}") long signupTokenValiditySeconds) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenValiditySeconds = accessTokenValiditySeconds;
@@ -54,8 +54,8 @@ public class TokenProvider {
         log.info("JWT SECRET DECODED LENGTH = {}", Decoders.BASE64.decode(secretKey).length);
     }
 
-    public String createToken(User user, Integer seconds) {
-        Long nowTime = new Date().getTime();
+    public String createToken(User user, long seconds) {
+        long nowTime = new Date().getTime();
 
         Date expiryDate = new Date(nowTime + seconds);
 
