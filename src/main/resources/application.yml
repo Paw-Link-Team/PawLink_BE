@@ -14,6 +14,14 @@ spring:
         show-sql: true
         format_sql: false
         use_sql_comments: true
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      s3:
+        bucket: pawlink-profile-images
+      credentials:
+        instance-profile: true
 
 super-admin:
   oauthProvider: ${SUPER_ADMIN_PROVIDER}
@@ -27,9 +35,9 @@ springdoc:
 
 jwt:
   secret: ${JWT_SECRET}
-  access-token-validity-in-milliseconds: ${ACCESS_TOKEN_VALIDITY_IN_MILLISECONDS}
-  refresh-token-validity-in-milliseconds: ${REFRESH_TOKEN_VALIDITY_IN_MILLISECONDS}
-  signup-token-validity-in-milliseconds: ${SIGNUP_TOKEN_VALIDITY_IN_MILLISECONDS}
+  access-token-validity-in-milliseconds: ${ACCESS_TOKEN_VALIDITY_IN_MILLISECONDS:3600000}
+  refresh-token-validity-in-milliseconds: ${REFRESH_TOKEN_VALIDITY_IN_MILLISECONDS:1209600000}
+  signup-token-validity-in-milliseconds: ${SIGNUP_TOKEN_VALIDITY_IN_MILLISECONDS:300000}
 kakao:
   client-id: ${KAKAO_CLIENT_ID}
   client-secret: ${KAKAO_CLIENT_SECRET}
@@ -50,4 +58,7 @@ naver:
 
 server:
   forward-headers-strategy: framework
+
+frontend:
+  redirect-url: http://182.215.194.170:3000/oauth/callback
 

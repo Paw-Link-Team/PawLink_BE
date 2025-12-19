@@ -34,7 +34,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     @Enumerated(EnumType.STRING)
@@ -78,6 +78,10 @@ public class User {
     }
 
     public void updateRole(Role role) { this.role = role; }
+
+    public void updateProfileImage(String profileImageUrl){
+        this.profileImageUrl = profileImageUrl;
+    }
 
     @Builder
     public User(String email,

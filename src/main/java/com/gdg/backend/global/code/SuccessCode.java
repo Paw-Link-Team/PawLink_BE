@@ -24,12 +24,14 @@ public enum SuccessCode {
     UPDATE(200, HttpStatus.OK, "게시판 수정이 정상적으로 처리되었습니다."),
     USER_UPDATE(201, HttpStatus.OK, "사용자 수정이 정상적으로 처리되었습니다."),
     PET_UPDATE(202, HttpStatus.OK, "반려동물 수정이 정상적으로 처리되었습니다."),
+    IMAGE_UPDATE(203, HttpStatus.OK, "이미지 변경이 정상적으로 처리되었습니다."),
 
     //203
 
     DELETE(300, HttpStatus.OK, "게시판 삭제가 정상적으로 처리되었습니다."),
     USER_DELETE(301, HttpStatus.OK, "탈퇴 처리가 정상적으로 처리되었습니다."),
-    PET_DELETE(302, HttpStatus.OK, "반려동물 삭제가 정상적으로 처리되었습니다.");
+    PET_DELETE(302, HttpStatus.OK, "반려동물 삭제가 정상적으로 처리되었습니다."),
+    IMAGE_DELETE(303, HttpStatus.OK,"이미지 삭제가 정상적으로 처리되었습니다.");
 
     private final int code;
     private final HttpStatus status;

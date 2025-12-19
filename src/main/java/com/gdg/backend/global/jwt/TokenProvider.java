@@ -36,15 +36,15 @@ import java.util.stream.Collectors;
 public class TokenProvider {
     private final Key key;
     @Getter
-    private final Integer accessTokenValiditySeconds;
+    private final long accessTokenValiditySeconds;
     @Getter
-    private final Integer refreshTokenValiditySeconds;
-    private final Integer signupTokenValiditySeconds;
+    private final long refreshTokenValiditySeconds;
+    private final long signupTokenValiditySeconds;
 
     public TokenProvider(@Value("${jwt.secret}") String secretKey,
-                         @Value("${jwt.access-token-validity-in-milliseconds}") Integer accessTokenValiditySeconds,
-                         @Value("${jwt.refresh-token-validity-in-milliseconds}") Integer refreshTokenValiditySeconds,
-                         @Value("${jwt.signup-token-validity-in-milliseconds}") Integer signupTokenValiditySeconds) {
+                         @Value("${jwt.access-token-validity-in-milliseconds}") long accessTokenValiditySeconds,
+                         @Value("${jwt.refresh-token-validity-in-milliseconds}") long refreshTokenValiditySeconds,
+                         @Value("${jwt.signup-token-validity-in-milliseconds}") long signupTokenValiditySeconds) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenValiditySeconds = accessTokenValiditySeconds;
@@ -54,8 +54,8 @@ public class TokenProvider {
         log.info("JWT SECRET DECODED LENGTH = {}", Decoders.BASE64.decode(secretKey).length);
     }
 
-    public String createToken(User user, Integer seconds) {
-        Long nowTime = new Date().getTime();
+    public String createToken(User user, long seconds) {
+        long nowTime = new Date().getTime();
 
         Date expiryDate = new Date(nowTime + seconds);
 
@@ -75,7 +75,7 @@ public class TokenProvider {
         return createToken(user, refreshTokenValiditySeconds);
     }
 
-    public String idToken(OauthProvider provider, String providerId){
+    public String idToken(OauthProvider provider, String providerId, String email){
         Long time = new Date().getTime();
 
         Date expiryDate = new Date(time+signupTokenValiditySeconds);
@@ -84,6 +84,7 @@ public class TokenProvider {
                 .setSubject("OAUTH_SIGNUP")
                 .claim("provider", provider.name())
                 .claim("providerId", providerId)
+                .claim("email", email)
                 .claim("status", UserStatus.PENDING.name())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
@@ -104,7 +105,8 @@ public class TokenProvider {
 
         return new SignupPrincipal(
                 OauthProvider.valueOf(claims.get("provider").toString()),
-                claims.get("providerId").toString()
+                claims.get("providerId").toString(),
+                claims.get("email").toString()
         );
     }
 
