@@ -9,7 +9,7 @@ import com.gdg.backend.user.domain.Role;
 import com.gdg.backend.user.domain.Type;
 import com.gdg.backend.user.domain.User;
 import com.gdg.backend.user.dto.TokenResponseDto;
-import com.gdg.backend.user.image.profile.service.ProfileImageConstants;
+import com.gdg.backend.user.image.profile.ProfileImageConstants;
 import com.gdg.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

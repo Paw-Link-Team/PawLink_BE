@@ -1,10 +1,9 @@
 package com.gdg.backend.user.service;
 
-import com.gdg.backend.global.exception.ProfileImageUploadException;
 import com.gdg.backend.global.exception.UserNotFoundException;
 import com.gdg.backend.user.domain.User;
-import com.gdg.backend.user.image.profile.service.ProfileImageConstants;
-import com.gdg.backend.user.image.profile.service.ProfileImageService;
+import com.gdg.backend.user.image.profile.ProfileImageConstants;
+import com.gdg.backend.user.image.profile.ProfileImageService;
 import com.gdg.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

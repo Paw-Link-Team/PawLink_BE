@@ -1,4 +1,4 @@
-package com.gdg.backend.user.image.profile.service;
+package com.gdg.backend.user.image.profile;
 
 import com.gdg.backend.global.exception.ProfileImageUploadException;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.gdg.backend.user.image.profile.service;
+package com.gdg.backend.user.image.profile;
 
 public final class ProfileImageConstants {
 
