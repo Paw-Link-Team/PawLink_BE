@@ -60,5 +60,5 @@ server:
   forward-headers-strategy: framework
 
 frontend:
-  redirect-url: pawlink-front.vercel.app/oauth/callback
+  redirect-url: https://182.215.194.170:3000/oauth/callback
 
