@@ -60,5 +60,5 @@ server:
   forward-headers-strategy: framework
 
 frontend:
-  redirect-url: https://182.215.194.170:3000/oauth/callback
+  redirect-url: http://182.215.194.170:3000/oauth/callback
 
