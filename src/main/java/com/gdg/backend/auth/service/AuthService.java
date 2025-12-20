@@ -37,7 +37,7 @@ public class AuthService {
                 tokenProvider.parseSignupToken(request.getIdToken());
 
         try {
-            return signupInternal(principal, request);
+            return signupInternal(principal);
         } catch (DataIntegrityViolationException e) {
             return loginInternal(principal);
         }
