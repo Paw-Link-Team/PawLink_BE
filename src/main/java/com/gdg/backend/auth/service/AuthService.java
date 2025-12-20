@@ -13,6 +13,7 @@ import com.gdg.backend.user.image.profile.ProfileImageConstants;
 import com.gdg.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,60 +27,58 @@ public class AuthService {
     private final SuperAdminProperties superAdminProperties;
 
     @Transactional
-    public TokenResponseDto signupOrLogin(AuthRequestDto request){
+    public TokenResponseDto signupOrLogin(AuthRequestDto request) {
 
-        SignupPrincipal principal = tokenProvider.parseSignupToken(request.getIdToken());
+        SignupPrincipal principal =
+                tokenProvider.parseSignupToken(request.getIdToken());
 
         OauthProvider provider = principal.provider();
         String providerId = principal.providerId();
         String email = principal.email();
 
-        return userRepository
-                .findByOauthProviderAndProviderId(provider, providerId)
-                .map(this::login)
-                // 3️⃣ 없으면 회원가입
-                .orElseGet(() -> signUp(provider, providerId, email, request));
+        try {
+            String tempNickname =
+                    "user_" + provider.name().toLowerCase() + "_" + providerId;
+
+            User user = User.builder()
+                    .oauthProvider(provider)
+                    .providerId(providerId)
+                    .email(email)
+                    .nickname(tempNickname)
+                    .profileImageUrl(ProfileImageConstants.DEFAULT_PROFILE_IMAGE)
+                    .role(Role.USER)
+                    .type(request.getType())
+                    .build();
+
+            if (isSuperAdmin(provider, providerId)) {
+                user.updateRole(Role.SUPER_ADMIN);
+                user.updateType(Type.ADMIN);
+            }
+
+            userRepository.save(user);
+
+            String refreshToken = tokenProvider.refreshToken(user);
+            user.updateRefreshToken(refreshToken);
+
+            return login(user);
+
+        } catch (DataIntegrityViolationException e) {
+
+            User existingUser = userRepository
+                    .findByOauthProviderAndProviderId(provider, providerId)
+                    .orElseThrow();
+
+            return login(existingUser);
+        }
     }
+
 
     public TokenResponseDto login(User user) {
 
         return saveTokenResponse(user, tokenProvider);
     }
 
-    @Transactional
-    protected TokenResponseDto signUp(
-            OauthProvider provider,
-            String providerId,
-            String email,
-            AuthRequestDto request
-    ) {
 
-        String tempNickname = "user_" + provider.name().toLowerCase() + "_" + providerId;
-
-        User user = User.builder()
-                .oauthProvider(provider)
-                .providerId(providerId)
-                .email(email)
-                .nickname(tempNickname)
-                .profileImageUrl(ProfileImageConstants.DEFAULT_PROFILE_IMAGE)
-                .role(Role.USER)
-                .type(request.getType())
-                .build();
-
-        // SUPER_ADMIN 판별
-        if (isSuperAdmin(provider, providerId)) {
-            user.updateRole(Role.SUPER_ADMIN);
-            user.updateType(Type.ADMIN);
-        }
-
-        userRepository.save(user);
-
-        // Refresh Token 저장
-        String refreshToken = tokenProvider.refreshToken(user);
-        user.updateRefreshToken(refreshToken);
-
-        return login(user);
-    }
 
     /**
      * 슈퍼 관리자 판별
