@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,8 +24,17 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "users")
+@Table(
+        name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_users_oauth_provider_provider_id",
+                        columnNames = {"oauthProvider", "providerId"}
+                )
+        }
+)
 @EntityListeners(AuditingEntityListener.class)
+
 public class User {
 
     @Id
@@ -42,14 +52,14 @@ public class User {
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private OauthProvider oauthProvider;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Type type;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String providerId;
 
     @Column(nullable = false)
