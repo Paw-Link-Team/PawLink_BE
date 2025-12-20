@@ -54,11 +54,13 @@ public class AuthService {
             AuthRequestDto request
     ) {
 
+        String tempNickname = "user_" + provider.name().toLowerCase() + "_" + providerId;
+
         User user = User.builder()
                 .oauthProvider(provider)
                 .providerId(providerId)
                 .email(email)
-                .nickname(request.getNickname())
+                .nickname(tempNickname)
                 .profileImageUrl(ProfileImageConstants.DEFAULT_PROFILE_IMAGE)
                 .role(Role.USER)
                 .type(request.getType())
