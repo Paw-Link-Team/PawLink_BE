@@ -6,6 +6,7 @@ import com.gdg.backend.global.jwt.TokenProvider;
 import com.gdg.backend.global.security.SignupPrincipal;
 import com.gdg.backend.user.domain.OauthProvider;
 import com.gdg.backend.user.domain.Role;
+import com.gdg.backend.user.domain.Type;
 import com.gdg.backend.user.domain.User;
 import com.gdg.backend.user.dto.TokenResponseDto;
 import com.gdg.backend.user.image.profile.ProfileImageConstants;
@@ -47,8 +48,7 @@ public class AuthService {
      */
     @Transactional
     protected TokenResponseDto signupInternal(
-            SignupPrincipal principal,
-            AuthRequestDto request
+            SignupPrincipal principal
     ) {
         OauthProvider provider = principal.provider();
         String providerId = principal.providerId();
@@ -64,7 +64,7 @@ public class AuthService {
                 .nickname(tempNickname)
                 .profileImageUrl(ProfileImageConstants.DEFAULT_PROFILE_IMAGE)
                 .role(Role.USER)
-                .type(request.getType()) // OWNER / WALKER
+                .type(Type.TEMP) // 🔑 핵심
                 .build();
 
         if (isSuperAdmin(provider, providerId)) {
@@ -78,6 +78,7 @@ public class AuthService {
 
         return login(user);
     }
+
 
     /**
      * 로그인 전용 트랜잭션
