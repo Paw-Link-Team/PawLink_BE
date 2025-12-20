@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
-
     // 특정 채팅방(chatRoomId) 메시지를 전송 시간 순으로 모두 가져오기
     List<ChatMessage> findByChatRoomIdOrderBySentAtAsc(Long chatRoomId);
 
