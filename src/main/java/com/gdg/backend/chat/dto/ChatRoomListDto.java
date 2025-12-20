@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ChatRoomListDto {
-    private String chatRoomId;
+    private Long chatRoomId;
     private String profileImgUrl;
     private String title;
     private String lastMessage;

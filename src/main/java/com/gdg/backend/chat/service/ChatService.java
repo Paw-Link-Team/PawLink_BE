@@ -40,8 +40,8 @@ public class ChatService {
         return rooms.stream().map(this::toListDto).collect(Collectors.toList());
     }
 
-    public ChatRoomDetailDto getChatRoomDetail(String roomId) {
-        ChatRoom room = chatRoomRepository.findById(roomId).orElseThrow();
+    public ChatRoomDetailDto getChatRoomDetail(Long chatRoomId) {
+        ChatRoom room = chatRoomRepository.findById(chatRoomId).orElseThrow();
         // post, appointment 조회 생략 (추가 구현 필요)
         return toDetailDto(room, null, null);
     }

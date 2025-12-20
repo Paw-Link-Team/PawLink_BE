@@ -4,6 +4,8 @@ import com.gdg.backend.chat.dto.ChatRoomDetailDto;
 import com.gdg.backend.chat.dto.ChatRoomListDto;
 import com.gdg.backend.chat.entity.ChatRoomStatus;
 import com.gdg.backend.chat.service.ChatService;
+import com.gdg.backend.global.security.UserPrincipal;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +25,13 @@ public class ChatController {
     }
 
     @GetMapping("/rooms")
-    public List<ChatRoomListDto> getRooms(@RequestParam Long userId,
+    public List<ChatRoomListDto> getRooms(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                           @RequestParam(defaultValue = "ALL") ChatRoomStatus filter) {
-        return chatService.getChatRooms(userId, filter);
+        return chatService.getChatRooms(userPrincipal.userId(), filter);
     }
 
-    @GetMapping("/rooms/{roomId}")
-    public ChatRoomDetailDto getRoomDetail(@PathVariable String roomId) {
-        return chatService.getChatRoomDetail(roomId);
+    @GetMapping("/rooms/{chatRoomId}")
+    public ChatRoomDetailDto getRoomDetail(@PathVariable Long chatRoomId) {
+        return chatService.getChatRoomDetail(chatRoomId);
     }
 }

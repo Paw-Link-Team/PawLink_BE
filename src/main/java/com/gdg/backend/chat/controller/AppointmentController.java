@@ -19,13 +19,13 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
-    @PostMapping("/{roomId}")
-    public void saveAppointment(@PathVariable String roomId, @RequestBody AppointmentDto dto) {
-        appointmentService.saveOrUpdate(roomId, dto);
+    @PostMapping("/{chatRoomId}")
+    public void saveAppointment(@PathVariable Long chatRoomId, @RequestBody AppointmentDto dto) {
+        appointmentService.saveOrUpdate(chatRoomId, dto);
     }
 
-    @GetMapping("/{roomId}")
-    public AppointmentDto getAppointment(@PathVariable String roomId) {
-        return appointmentService.getByRoomId(roomId);
+    @GetMapping("/{chatRoomId}")
+    public AppointmentDto getAppointment(@PathVariable Long chatRoomId) {
+        return appointmentService.getByRoomId(chatRoomId);
     }
 }

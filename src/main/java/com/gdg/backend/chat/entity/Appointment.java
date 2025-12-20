@@ -21,9 +21,7 @@ public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String chatRoomId;
-
+    private Long chatRoomId;
     private LocalDate date;
     private LocalTime time;
     private String locationAddress;

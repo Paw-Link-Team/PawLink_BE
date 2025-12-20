@@ -16,9 +16,9 @@ public class AppointmentService {
         this.appointmentRepository = appointmentRepository;
     }
 
-    public void saveOrUpdate(String roomId, AppointmentDto dto) {
-        Appointment appt = appointmentRepository.findByChatRoomId(roomId).orElse(new Appointment());
-        appt.setChatRoomId(roomId);
+    public void saveOrUpdate(Long chatRoomId, AppointmentDto dto) {
+        Appointment appt = appointmentRepository.findByChatRoomId(chatRoomId).orElse(new Appointment());
+        appt.setChatRoomId(chatRoomId);
         appt.setDate(dto.getDate());
         appt.setTime(dto.getTime());
         appt.setLocationAddress(dto.getLocationAddress());
@@ -27,8 +27,8 @@ public class AppointmentService {
         appointmentRepository.save(appt);
     }
 
-    public AppointmentDto getByRoomId(String roomId) {
-        return appointmentRepository.findByChatRoomId(roomId)
+    public AppointmentDto getByRoomId(Long chatRoomId) {
+        return appointmentRepository.findByChatRoomId(chatRoomId)
                 .map(this::toDto)
                 .orElse(null);
     }

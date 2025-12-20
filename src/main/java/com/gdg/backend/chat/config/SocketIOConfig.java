@@ -11,7 +11,7 @@ public class SocketIOConfig {
     @Value("${socketio.host:0.0.0.0}")
     private String host;
 
-    @Value("${socketio.port:9092}")
+    @Value("${socketio.port:443}")
     private int port;
 
     @Bean

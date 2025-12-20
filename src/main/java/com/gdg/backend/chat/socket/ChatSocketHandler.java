@@ -1,9 +1,6 @@
 package com.gdg.backend.chat.socket;
 
 import com.corundumstudio.socketio.SocketIOServer;
-import com.corundumstudio.socketio.listener.ConnectListener;
-import com.corundumstudio.socketio.listener.DataListener;
-import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.gdg.backend.chat.dto.ChatMessageDto;
 import com.gdg.backend.chat.service.ChatService;
 import jakarta.annotation.PostConstruct;
@@ -48,15 +45,15 @@ public class ChatSocketHandler {
         });
 
         // 방 입장 이벤트
-        server.addEventListener("joinRoom", String.class, (client, roomId, ackSender) -> {
-            client.joinRoom(roomId);
-            log.info("Client {} joined room {}", client.getSessionId(), roomId);
+        server.addEventListener("joinRoom", Long.class, (client, chatRoomId, ackSender) -> {
+            client.joinRoom(String.valueOf(chatRoomId));
+            log.info("Client {} joined room {}", client.getSessionId(), chatRoomId);
         });
 
         // 방 퇴장 이벤트
-        server.addEventListener("leaveRoom", String.class, (client, roomId, ackSender) -> {
-            client.leaveRoom(roomId);
-            log.info("Client {} left room {}", client.getSessionId(), roomId);
+        server.addEventListener("leaveRoom", Long.class, (client, chatRoomId, ackSender) -> {
+            client.leaveRoom(String.valueOf(chatRoomId));
+            log.info("Client {} left room {}", client.getSessionId(), chatRoomId);
         });
 
         // 메시지 전송 이벤트
@@ -67,7 +64,7 @@ public class ChatSocketHandler {
             ChatMessageDto saved = chatService.saveMessage(messageDto);
             
             // 해당 방에 있는 모든 클라이언트에게 'newMessage' 이벤트 전송
-            server.getRoomOperations(saved.getChatRoomId()).sendEvent("newMessage", saved);
+            server.getRoomOperations(String.valueOf(saved.getChatRoomId())).sendEvent("newMessage", saved);
         });
     }
 }

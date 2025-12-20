@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ChatRoomDetailDto {
-    private String chatRoomId;
+    private Long chatRoomId;
     private String profileName;
     private String profilePhone;
     // PostDto가 없으므로 임시로 주석 처리하거나 필요한 필드만 직접 정의

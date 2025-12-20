@@ -8,6 +8,6 @@ import java.util.Optional;
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
     // 특정 채팅방(chatRoomId)에 해당하는 약속 정보 조회
-    Optional<Appointment> findByChatRoomId(String chatRoomId);
+    Optional<Appointment> findByChatRoomId(Long chatRoomId);
 
 }
