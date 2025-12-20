@@ -1,7 +1,11 @@
 package com.gdg.backend.chat.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 public class ChatRoomListDto {
     private String chatRoomId;
     private String profileImgUrl;
@@ -10,6 +14,4 @@ public class ChatRoomListDto {
     private LocalDateTime lastSentAt;
     private int unreadCount;
     private String status;  // ALL, UNREAD, COMPLETED
-
-    // getter, setter
 }

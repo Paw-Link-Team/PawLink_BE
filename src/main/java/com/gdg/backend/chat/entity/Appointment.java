@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +14,8 @@ import java.time.LocalTime;
 
 @Entity
 @Table(name = "appointments")
+@Getter
+@Setter
 public class Appointment {
 
     @Id
@@ -27,6 +31,4 @@ public class Appointment {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    // 생성자, getter/setter
 }

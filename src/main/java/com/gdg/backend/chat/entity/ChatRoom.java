@@ -5,11 +5,15 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "chat_rooms")
+@Getter
+@Setter
 public class ChatRoom {
 
     @Id
@@ -23,6 +27,4 @@ public class ChatRoom {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    // 생성자, getter/setter
 }
