@@ -1,16 +1,7 @@
 package com.gdg.backend.user.domain;
 
 import com.gdg.backend.global.oauth.dto.UserInfoDto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,83 +15,67 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 @Table(
         name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uk_users_oauth_provider_provider_id",
-                        columnNames = {"oauthProvider", "providerId"}
+                        columnNames = {"oauth_provider", "provider_id"}
                 )
         }
 )
-@EntityListeners(AuditingEntityListener.class)
-
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "nickname", nullable = false)
     private String nickname;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "role", nullable = false)
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "oauth_provider", nullable = false)
     private OauthProvider oauthProvider;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "type", nullable = false)
     private Type type;
 
-    @Column(nullable = false)
+    @Column(name = "provider_id", nullable = false)
     private String providerId;
 
-    @Column(nullable = false)
+    @Column(name = "profile_image_url", nullable = false)
     private String profileImageUrl;
 
+    @Column(name = "refresh_token", length = 500)
+    private String refreshToken;
+
     @CreatedDate
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(length = 500)
-    private String refreshToken;
-
-    public void updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public void updateProfile(String nickname, String profileImageUrl) {
-        if (nickname != null) this.nickname = nickname;
-        if (profileImageUrl != null) this.profileImageUrl = profileImageUrl;
-    }
-
-    public void updateType(Type type) {
-        this.type = type;
-    }
-
-    public void updateRole(Role role) { this.role = role; }
-
-    public void updateProfileImage(String profileImageUrl){
-        this.profileImageUrl = profileImageUrl;
-    }
-
     @Builder
-    public User(String email,
-                String nickname,
-                Role role,
-                Type type,
-                OauthProvider oauthProvider,
-                String providerId,
-                String profileImageUrl) {
+    private User(
+            String email,
+            String nickname,
+            Role role,
+            Type type,
+            OauthProvider oauthProvider,
+            String providerId,
+            String profileImageUrl
+    ) {
         this.email = email;
         this.nickname = nickname;
         this.role = role;
@@ -122,5 +97,28 @@ public class User {
                 .build();
     }
 
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 
+    public void updateProfile(String nickname, String profileImageUrl) {
+        if (nickname != null) {
+            this.nickname = nickname;
+        }
+        if (profileImageUrl != null) {
+            this.profileImageUrl = profileImageUrl;
+        }
+    }
+
+    public void updateRole(Role role) {
+        this.role = role;
+    }
+
+    public void updateType(Type type) {
+        this.type = type;
+    }
+
+    public void updateProfileImage(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
 }
