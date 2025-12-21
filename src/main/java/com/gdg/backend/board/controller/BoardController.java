@@ -6,6 +6,8 @@ import com.gdg.backend.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.gdg.backend.global.security.UserPrincipal;
 
 import java.util.List;
 
@@ -17,8 +19,13 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody BoardRequestDto dto) {
-        return ResponseEntity.ok(boardService.create(dto));
+    public ResponseEntity<Long> create(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestBody BoardRequestDto dto
+    ) {
+        return ResponseEntity.ok(
+                boardService.create(principal.userId(), dto)
+        );
     }
 
     @GetMapping("/{id}")
@@ -33,16 +40,20 @@ public class BoardController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(
+            @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable Long id,
             @RequestBody BoardRequestDto dto
     ) {
-        boardService.update(id, dto);
+        boardService.update(id, principal.userId(), dto);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        boardService.delete(id);
+    public ResponseEntity<Void> delete(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable Long id
+    ) {
+        boardService.delete(id, principal.userId());
         return ResponseEntity.noContent().build();
     }
 }
