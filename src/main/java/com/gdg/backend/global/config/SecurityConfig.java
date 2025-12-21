@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.http.HttpMethod;
 
 import java.util.List;
 
@@ -38,18 +39,22 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/**"
-                                ,"/api/signup/user"
-                                ,"/auth/login"
-                                ,"/swagger-ui/**"
-                                ,"/v3/api-docs/**"
-                                ,"swagger-ui.html"
+                                "/api/auth/**",
+                                "/api/signup/user",
+                                "/auth/login",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "swagger-ui.html"
                         ).permitAll()
-                        .requestMatchers(
-                                "/admin/**"
-                        ).hasAnyAuthority("ADMIN","SUPER_ADMIN")
+
+                        // 게시판 조회는 누구나 가능
+                        .requestMatchers(HttpMethod.GET, "/boards/**").permitAll()
+
+                        // 관리자 전용 API
+                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN","SUPER_ADMIN")
                         .requestMatchers("/internal/**").hasAuthority("SUPER_ADMIN")
-                        .requestMatchers("/mypage/**").authenticated()
+
+                        // 그 외 모든 요청(생성,수정,삭제) 인증 필수
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(configurationSource()))
