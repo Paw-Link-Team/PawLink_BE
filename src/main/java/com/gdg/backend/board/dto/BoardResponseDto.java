@@ -11,6 +11,7 @@ public class BoardResponseDto {
     private String title;
     private String information;
     private String description;
+    private Long viewCount;
     private Long userId;
     private String userNickname;
 
@@ -20,6 +21,7 @@ public class BoardResponseDto {
                 board.getTitle(),
                 board.getInformation(),
                 board.getDescription(),
+                board.getViewCount(),
                 board.getUser().getId(),
                 board.getUser().getNickname()
         );

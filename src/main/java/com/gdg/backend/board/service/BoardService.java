@@ -36,6 +36,9 @@ public class BoardService {
         Board board = boardRepository.findById(id)
                 .orElseThrow(BoardNotFoundException::new);
 
+        // 조회수 증가
+        board.increaseViewCount();
+
         return BoardResponseDto.from(board);
     }
 

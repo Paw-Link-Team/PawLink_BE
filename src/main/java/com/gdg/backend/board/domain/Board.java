@@ -23,6 +23,14 @@ public class Board {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    // 조회수
+    private Long viewCount = 0L;
+
+    // 조회수 증가 메서드
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
