@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
-
     // 유저별 전체 채팅방
     List<ChatRoom> findByOwnerUserIdOrWalkerUserId(Long ownerUserId, Long walkerUserId);
 
