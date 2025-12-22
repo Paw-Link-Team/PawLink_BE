@@ -49,6 +49,10 @@ public class User {
     @Column(name = "type", nullable = false)
     private Type type;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_status", nullable = false)
+    private UserStatus userStatus;
+
     @Column(name = "provider_id", nullable = false)
     private String providerId;
 
@@ -74,7 +78,8 @@ public class User {
             Type type,
             OauthProvider oauthProvider,
             String providerId,
-            String profileImageUrl
+            String profileImageUrl,
+            UserStatus userStatus
     ) {
         this.email = email;
         this.nickname = nickname;
@@ -83,6 +88,7 @@ public class User {
         this.oauthProvider = oauthProvider;
         this.providerId = providerId;
         this.profileImageUrl = profileImageUrl;
+        this.userStatus = userStatus;
     }
 
     public static User fromOAuth(UserInfoDto info, Type type) {
@@ -99,6 +105,14 @@ public class User {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void updateNickname(String nickname){
+        this.nickname = nickname;
+    }
+
+    public void updateUserStatus(UserStatus userStatus){
+        this.userStatus = userStatus;
     }
 
     public void updateProfile(String nickname, String profileImageUrl) {

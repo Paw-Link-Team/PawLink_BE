@@ -60,11 +60,11 @@ public class UserService {
         }
 
         if (user.getType() == Type.WALKER &&
-                targetType == Type.PROVIDER) {
+                targetType == Type.OWNER) {
             return;
         }
 
-        if (user.getType() == Type.PROVIDER &&
+        if (user.getType() == Type.OWNER &&
                 targetType == Type.WALKER) {
             return;
         }

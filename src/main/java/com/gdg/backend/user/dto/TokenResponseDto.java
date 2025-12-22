@@ -19,6 +19,7 @@ public class TokenResponseDto {
     private OauthProvider oauthProvider;
     private Role role;
     private Type type;
+    private boolean newUser;
 
     @Builder
     public TokenResponseDto(String accessToken,
@@ -29,7 +30,8 @@ public class TokenResponseDto {
                             String profileImageUrl,
                             OauthProvider oauthProvider,
                             Role role,
-                            Type type) {
+                            Type type,
+                            boolean newUser) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.userId = userId;
@@ -39,5 +41,6 @@ public class TokenResponseDto {
         this.oauthProvider = oauthProvider;
         this.role = role;
         this.type = type;
+        this.newUser = newUser;
     }
 }

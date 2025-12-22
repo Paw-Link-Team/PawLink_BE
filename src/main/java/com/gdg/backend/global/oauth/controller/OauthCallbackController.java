@@ -2,17 +2,14 @@ package com.gdg.backend.global.oauth.controller;
 
 import com.gdg.backend.global.config.FrontendProperties;
 import com.gdg.backend.global.jwt.TokenProvider;
-import com.gdg.backend.global.oauth.dto.IdTokenResponse;
 import com.gdg.backend.global.oauth.dto.UserInfoDto;
 import com.gdg.backend.global.oauth.factory.SocialOauthServiceFactory;
 import com.gdg.backend.global.oauth.service.SocialOauthService;
-import com.gdg.backend.global.response.ApiResponse;
 import com.gdg.backend.user.domain.OauthProvider;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

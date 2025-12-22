@@ -41,6 +41,7 @@ public class SecurityConfig {
                                 "/api/auth/**"
                                 ,"/api/signup/user"
                                 ,"/auth/login"
+                                ,"/auth/onboarding"
                                 ,"/swagger-ui/**"
                                 ,"/v3/api-docs/**"
                                 ,"swagger-ui.html"
@@ -65,6 +66,13 @@ public class SecurityConfig {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Access-Control-Allow-Credentials", "Authorization", "Set-Cookie"));
+        configuration.setAllowedOriginPatterns(
+                List.of(
+                        "https://pawlink-frontend.vercel.app",
+                        "http://localhost:3000",
+                        "http://182.215.194.170:3000"
+                )
+        );
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
