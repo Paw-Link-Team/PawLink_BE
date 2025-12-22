@@ -46,16 +46,11 @@ public class SecurityConfig {
                                 ,"/swagger-ui/**"
                                 ,"/v3/api-docs/**"
                                 ,"swagger-ui.html"
+                                ,"/api/health"
                         ).permitAll()
-
-                        // 게시판 조회는 누구나 가능
-                        .requestMatchers(HttpMethod.GET, "/boards/**").permitAll()
-
-                        // 관리자 전용 API
+                        .requestMatchers(HttpMethod.GET, "/boards/**").authenticated()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN","SUPER_ADMIN")
                         .requestMatchers("/internal/**").hasAuthority("SUPER_ADMIN")
-
-                        // 그 외 모든 요청(생성,수정,삭제) 인증 필수
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(configurationSource()))
