@@ -1,12 +1,14 @@
 package com.gdg.backend.auth.controller;
 
-import com.gdg.backend.auth.dto.AuthRequestDto;
+import com.gdg.backend.auth.dto.AuthLoginRequestDto;
+import com.gdg.backend.auth.dto.AuthOnboardingRequestDto;
 import com.gdg.backend.auth.service.AuthService;
 import com.gdg.backend.global.code.SuccessCode;
 import com.gdg.backend.global.response.ApiResponse;
 import com.gdg.backend.user.dto.TokenResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,12 +24,26 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "로그인 회원가입 통합", description = "로그인 및 회원가입을 통합시켰습니다.")
+    @Operation(summary = "OIDC 로그인", description = "기존 유저 로그인 입니다.")
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<TokenResponseDto>> signupOrLogin(
-            @RequestBody AuthRequestDto request
-            ){
-        TokenResponseDto token = authService.signupOrLogin(request);
-        return ApiResponse.success(SuccessCode.LOGIN_SUCCESS,token);
+    public ResponseEntity<ApiResponse<TokenResponseDto>> login(
+            @RequestBody @Valid AuthLoginRequestDto request
+    ) {
+        return ApiResponse.success(
+                SuccessCode.LOGIN_SUCCESS,
+                authService.login(request)
+        );
     }
+
+    @Operation(summary = "신규 회원가입", description = "신규 유저들은 닉네임과 유형을 선택합니다.")
+    @PostMapping("/onboarding")
+    public ResponseEntity<ApiResponse<TokenResponseDto>> onboarding(
+            @RequestBody @Valid AuthOnboardingRequestDto request
+    ) {
+        return ApiResponse.success(
+                SuccessCode.USER_CREATED,
+                authService.onboarding(request)
+        );
+    }
+
 }
