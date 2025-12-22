@@ -21,13 +21,12 @@ public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatRoomId;
-
+    private Long boardId; // 게시글 ID 추가
     private Long ownerUserId;
     private Long walkerUserId;
 
     @Enumerated(EnumType.STRING)
     private ChatRoomStatus status; // ALL, UNREAD, COMPLETED 구분
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
