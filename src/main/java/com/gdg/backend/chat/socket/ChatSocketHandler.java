@@ -35,14 +35,10 @@ public class ChatSocketHandler {
 
     private void registerEvents() {
         // 연결 리스너
-        server.addConnectListener(client -> {
-            log.info("Client connected: {}", client.getSessionId());
-        });
+        server.addConnectListener(client -> log.info("Client connected: {}", client.getSessionId()));
 
         // 연결 해제 리스너
-        server.addDisconnectListener(client -> {
-            log.info("Client disconnected: {}", client.getSessionId());
-        });
+        server.addDisconnectListener(client -> log.info("Client disconnected: {}", client.getSessionId()));
 
         // 방 입장 이벤트
         server.addEventListener("joinRoom", Long.class, (client, chatRoomId, ackSender) -> {

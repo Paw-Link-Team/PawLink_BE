@@ -1,5 +1,8 @@
 package com.gdg.backend.chat.service;
 
+import com.gdg.backend.board.domain.Board;
+import com.gdg.backend.board.dto.BoardResponseDto;
+import com.gdg.backend.board.repository.BoardRepository;
 import com.gdg.backend.chat.dto.ChatMessageDto;
 import com.gdg.backend.chat.dto.ChatRoomDetailDto;
 import com.gdg.backend.chat.dto.ChatRoomListDto;
@@ -8,44 +11,64 @@ import com.gdg.backend.chat.entity.ChatRoom;
 import com.gdg.backend.chat.entity.ChatRoomStatus;
 import com.gdg.backend.chat.repository.ChatMessageRepository;
 import com.gdg.backend.chat.repository.ChatRoomRepository;
+import com.gdg.backend.user.domain.User;
+import com.gdg.backend.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
 
-    public ChatService(ChatRoomRepository chatRoomRepository, ChatMessageRepository chatMessageRepository) {
-        this.chatRoomRepository = chatRoomRepository;
-        this.chatMessageRepository = chatMessageRepository;
+    public List<ChatRoomListDto> getChatRooms(Long currentUserId, ChatRoomStatus filter) {
+        List<ChatRoom> rooms = switch (filter) {
+            case UNREAD -> chatRoomRepository.findUnreadRoomsByUser(currentUserId);
+            case COMPLETED ->
+                    chatRoomRepository.findByOwnerUserIdOrWalkerUserIdAndStatus(currentUserId, currentUserId, ChatRoomStatus.COMPLETED);
+            default -> chatRoomRepository.findByOwnerUserIdOrWalkerUserId(currentUserId, currentUserId);
+        };
+
+        Map<Long, ChatMessage> latestMessages = chatMessageRepository.findLatestMessages().stream()
+                .collect(Collectors.toMap(ChatMessage::getChatRoomId, Function.identity()));
+        Map<Long, Long> unreadCounts = chatMessageRepository.countUnreadMessagesByRoom().stream()
+                .collect(Collectors.toMap(row -> (Long) row[0], row -> (Long) row[1]));
+
+        return rooms.stream()
+                .map(room -> toListDto(room, currentUserId, latestMessages.get(room.getChatRoomId()), unreadCounts.getOrDefault(room.getChatRoomId(), 0L)))
+                .collect(Collectors.toList());
     }
 
-    public List<ChatRoomListDto> getChatRooms(Long userId, ChatRoomStatus filter) {
-        List<ChatRoom> rooms;
-        switch (filter) {
-            case UNREAD:
-                rooms = chatRoomRepository.findUnreadRoomsByUser(userId);
-                break;
-            case COMPLETED:
-                rooms = chatRoomRepository.findByOwnerUserIdOrWalkerUserIdAndStatus(userId, userId, ChatRoomStatus.COMPLETED);
-                break;
-            default:
-                rooms = chatRoomRepository.findByOwnerUserIdOrWalkerUserId(userId, userId);
-        }
-        return rooms.stream().map(this::toListDto).collect(Collectors.toList());
+    @Transactional
+    public ChatRoomDetailDto getChatRoomDetail(Long chatRoomId, Long currentUserId) {
+        ChatRoom room = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new NoSuchElementException("채팅방을 찾을 수 없습니다."));
+
+        List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderBySentAtAsc(chatRoomId);
+        List<ChatMessageDto> messageDtos = messages.stream()
+                .map(this::toMessageDto)
+                .collect(Collectors.toList());
+
+        ChatRoomDetailDto detailDto = toDetailDto(room, currentUserId, null);
+        detailDto.setMessages(messageDtos);
+
+        return detailDto;
     }
 
-    public ChatRoomDetailDto getChatRoomDetail(Long chatRoomId) {
-        ChatRoom room = chatRoomRepository.findById(chatRoomId).orElseThrow();
-        // post, appointment 조회 생략 (추가 구현 필요)
-        return toDetailDto(room, null, null);
-    }
-
+    @Transactional
     public ChatMessageDto saveMessage(ChatMessageDto dto) {
         ChatMessage entity = new ChatMessage();
         entity.setChatRoomId(dto.getChatRoomId());
@@ -58,18 +81,65 @@ public class ChatService {
         return toMessageDto(saved);
     }
 
-    private ChatRoomListDto toListDto(ChatRoom room) {
+    public List<ChatMessageDto> getUnreadMessages(Long chatRoomId) {
+        List<ChatMessage> unreadMessages = chatMessageRepository.findByChatRoomIdAndIsReadFalse(chatRoomId);
+        return unreadMessages.stream()
+                .map(this::toMessageDto)
+                .collect(Collectors.toList());
+    }
+
+    private ChatRoomListDto toListDto(ChatRoom room, Long currentUserId, ChatMessage lastMessage, Long unreadCount) {
         ChatRoomListDto dto = new ChatRoomListDto();
+        
+        // 상대방 정보 조회
+        Long otherUserId = room.getOwnerUserId().equals(currentUserId) ? room.getWalkerUserId() : room.getOwnerUserId();
+        User otherUser = userRepository.findById(otherUserId).orElse(null);
+
+        // 게시글 정보 조회
+        Board board = boardRepository.findById(room.getBoardId()).orElse(null);
+
         dto.setChatRoomId(room.getChatRoomId());
-        // 프로필 사진, 제목, 최근 메시지, 마지막 전송 시간, 안읽음개수 세팅은 커스텀 로직 필요
         dto.setStatus(room.getStatus().name());
+        if (otherUser != null) {
+            dto.setProfileImgUrl(otherUser.getProfileImageUrl());
+        }
+        if (board != null) {
+            dto.setTitle(board.getTitle());
+        }
+
+        if (lastMessage != null) {
+            dto.setLastMessage(lastMessage.getMessage());
+            dto.setLastSentAt(lastMessage.getSentAt());
+        }
+        dto.setUnreadCount(unreadCount.intValue());
+
         return dto;
     }
 
-    private ChatRoomDetailDto toDetailDto(ChatRoom room, Object post, Object appointment) {
+    private ChatRoomDetailDto toDetailDto(ChatRoom room, Long currentUserId, Object appointment) {
         ChatRoomDetailDto dto = new ChatRoomDetailDto();
+        
+        // 상대방 정보 조회
+        Long otherUserId = room.getOwnerUserId().equals(currentUserId) ? room.getWalkerUserId() : room.getOwnerUserId();
+        User otherUser = userRepository.findById(otherUserId).orElse(null);
+
+        // 게시글 정보 조회
+        Board board = boardRepository.findById(room.getBoardId()).orElse(null);
+
         dto.setChatRoomId(room.getChatRoomId());
-        // profileName, profilePhone, post, appointment 매핑 필요
+        if (otherUser != null) {
+            dto.setProfileName(otherUser.getNickname());
+            // User 엔티티에 전화번호 필드가 없으므로 주석 처리
+            // dto.setProfilePhone(otherUser.getPhoneNumber());
+        }
+        
+        if (board != null) {
+            dto.setPost(BoardResponseDto.from(board));
+        }
+
+        // appointment 매핑은 기존 로직 유지
+        // dto.setAppointment(appointment);
+
         return dto;
     }
 
