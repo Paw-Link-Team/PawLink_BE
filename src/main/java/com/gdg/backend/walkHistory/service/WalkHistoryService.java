@@ -1,6 +1,8 @@
 package com.gdg.backend.walkHistory.service;
 
+import com.gdg.backend.global.exception.UserNotFoundException;
 import com.gdg.backend.user.domain.User;
+import com.gdg.backend.user.repository.UserRepository;
 import com.gdg.backend.walkHistory.domain.WalkHistory;
 import com.gdg.backend.walkHistory.dto.WalkHistoryCreateRequest;
 import com.gdg.backend.walkHistory.dto.WalkHistoryResponse;
@@ -16,11 +18,15 @@ import java.util.List;
 public class WalkHistoryService {
 
     private final WalkHistoryRepository walkHistoryRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public WalkHistoryResponse create(User user, WalkHistoryCreateRequest request) {
+    public WalkHistoryResponse create(Long userId, WalkHistoryCreateRequest request) {
 
         validateRequest(request);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("유저가 없습니다."));
 
         WalkHistory walkHistory = WalkHistory.builder()
                 .user(user)
@@ -35,7 +41,10 @@ public class WalkHistoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<WalkHistoryResponse> findMyHistories(User user) {
+    public List<WalkHistoryResponse> findMyHistories(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
 
         return walkHistoryRepository.findByUserOrderByStartedAtDesc(user)
                 .stream()
