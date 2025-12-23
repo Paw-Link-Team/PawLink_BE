@@ -1,6 +1,7 @@
 package com.gdg.backend.user.domain;
 
 import com.gdg.backend.global.oauth.dto.UserInfoDto;
+import com.gdg.backend.pet.domain.Pet;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,6 +12,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -64,6 +67,10 @@ public class User {
 
     @Column(name = "phoneNumber", nullable = false)
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(name = "pets")
+    private List<Pet> pets = new ArrayList<>();
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
