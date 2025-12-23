@@ -62,6 +62,9 @@ public class User {
     @Column(name = "refresh_token", length = 500)
     private String refreshToken;
 
+    @Column(name = "phoneNumber", nullable = false)
+    private String phoneNumber;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -79,7 +82,8 @@ public class User {
             OauthProvider oauthProvider,
             String providerId,
             String profileImageUrl,
-            UserStatus userStatus
+            UserStatus userStatus,
+            String phoneNumber
     ) {
         this.email = email;
         this.nickname = nickname;
@@ -89,6 +93,7 @@ public class User {
         this.providerId = providerId;
         this.profileImageUrl = profileImageUrl;
         this.userStatus = userStatus;
+        this.phoneNumber = phoneNumber;
     }
 
     public static User fromOAuth(UserInfoDto info, Type type) {
@@ -110,6 +115,8 @@ public class User {
     public void updateNickname(String nickname){
         this.nickname = nickname;
     }
+
+    public void updatePhoneNumber(String phoneNumber){ this.phoneNumber = phoneNumber; }
 
     public void updateUserStatus(UserStatus userStatus){
         this.userStatus = userStatus;

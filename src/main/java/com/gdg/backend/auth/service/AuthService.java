@@ -67,6 +67,7 @@ public class AuthService {
 
         user.updateNickname(request.getNickname());
         user.updateType(request.getType());
+        user.updatePhoneNumber(request.getPhoneNumber());
         if(isSuperAdmin(principal.provider(), principal.providerId())){
             user.updateType(Type.ADMIN);
         }
@@ -79,7 +80,7 @@ public class AuthService {
      * 신규 가입 (PENDING)
      */
     private User signup(SignupPrincipal principal) {
-
+        String tempPhoneNumber = "010-1234-5678";
         User user = User.builder()
                 .oauthProvider(principal.provider())
                 .providerId(principal.providerId())
@@ -88,6 +89,7 @@ public class AuthService {
                 .profileImageUrl(ProfileImageConstants.DEFAULT_PROFILE_IMAGE)
                 .role(Role.USER)
                 .type(Type.TEMP)
+                .phoneNumber(tempPhoneNumber)
                 .userStatus(UserStatus.PENDING)
                 .build();
 

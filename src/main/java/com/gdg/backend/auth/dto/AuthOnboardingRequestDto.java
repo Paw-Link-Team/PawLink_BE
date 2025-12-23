@@ -13,4 +13,6 @@ public class AuthOnboardingRequestDto {
     private String nickname;
     @NotNull
     private Type type;
+    @NotBlank
+    private String phoneNumber;
 }
