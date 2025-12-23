@@ -15,6 +15,7 @@ public class UserInfoResponseDto {
     private String email;
     private String nickname;
     private String profileImageUrl;
+    private String phoneNumber;
     private Role role;
     private OauthProvider oauthProvider;
     private Type type;
@@ -24,6 +25,7 @@ public class UserInfoResponseDto {
                                String email,
                                String nickname,
                                String profileImageUrl,
+                               String phoneNumber,
                                Role role,
                                OauthProvider oauthProvider,
                                Type type){
@@ -31,6 +33,7 @@ public class UserInfoResponseDto {
         this.email = email;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
+        this.phoneNumber = phoneNumber;
         this.role = role;
         this.oauthProvider = oauthProvider;
         this.type = type;
@@ -42,6 +45,7 @@ public class UserInfoResponseDto {
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImageUrl())
+                .phoneNumber(user.getPhoneNumber())
                 .role(user.getRole())
                 .oauthProvider(user.getOauthProvider())
                 .type(user.getType())
