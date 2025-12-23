@@ -7,6 +7,7 @@ import com.gdg.backend.walkHistory.domain.WalkHistory;
 import com.gdg.backend.walkHistory.dto.WalkHistoryCreateRequest;
 import com.gdg.backend.walkHistory.dto.WalkHistoryResponse;
 import com.gdg.backend.walkHistory.repository.WalkHistoryRepository;
+import com.gdg.backend.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ public class WalkHistoryService {
 
     private final WalkHistoryRepository walkHistoryRepository;
     private final UserRepository userRepository;
+    private final WalletService walletService;
 
     @Transactional
     public WalkHistoryResponse create(Long userId, WalkHistoryCreateRequest request) {
@@ -26,7 +28,7 @@ public class WalkHistoryService {
         validateRequest(request);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("유저가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
 
         WalkHistory walkHistory = WalkHistory.builder()
                 .user(user)
@@ -36,6 +38,8 @@ public class WalkHistoryService {
                 .build();
 
         walkHistoryRepository.save(walkHistory);
+
+        walletService.earn(userId, 100, "산책 완료");
 
         return WalkHistoryResponse.from(walkHistory);
     }
