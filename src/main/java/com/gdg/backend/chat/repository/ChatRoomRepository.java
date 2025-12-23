@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
+
     // 유저별 전체 채팅방
     List<ChatRoom> findByOwnerUserIdOrWalkerUserId(Long ownerUserId, Long walkerUserId);
 
@@ -17,4 +19,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     // 완료 상태 채팅방 조회
     List<ChatRoom> findByOwnerUserIdOrWalkerUserIdAndStatus(Long ownerUserId, Long walkerUserId, ChatRoomStatus status);
+
+    // 이미 존재하는 채팅방인지 확인 (게시글 ID와 신청자 ID로 조회)
+    Optional<ChatRoom> findByBoardIdAndWalkerUserId(Long boardId, Long walkerUserId);
 }

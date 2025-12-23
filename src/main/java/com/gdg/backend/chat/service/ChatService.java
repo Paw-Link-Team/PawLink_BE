@@ -34,6 +34,30 @@ public class ChatService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
 
+    @Transactional
+    public Long createChatRoom(Long boardId, Long currentUserId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new NoSuchElementException("게시글을 찾을 수 없습니다."));
+
+        if (board.getUser().getId().equals(currentUserId)) {
+            throw new IllegalArgumentException("자신의 게시글에는 채팅을 신청할 수 없습니다.");
+        }
+
+        // 이미 존재하는 채팅방인지 확인
+        return chatRoomRepository.findByBoardIdAndWalkerUserId(boardId, currentUserId)
+                .map(ChatRoom::getChatRoomId)
+                .orElseGet(() -> {
+                    ChatRoom newRoom = new ChatRoom();
+                    newRoom.setBoardId(boardId);
+                    newRoom.setOwnerUserId(board.getUser().getId()); // 게시글 작성자
+                    newRoom.setWalkerUserId(currentUserId);          // 신청자
+                    newRoom.setStatus(ChatRoomStatus.ALL);
+                    newRoom.setCreatedAt(LocalDateTime.now());
+                    newRoom.setUpdatedAt(LocalDateTime.now());
+                    return chatRoomRepository.save(newRoom).getChatRoomId();
+                });
+    }
+
     public List<ChatRoomListDto> getChatRooms(Long currentUserId, ChatRoomStatus filter) {
         List<ChatRoom> rooms = switch (filter) {
             case UNREAD -> chatRoomRepository.findUnreadRoomsByUser(currentUserId);
