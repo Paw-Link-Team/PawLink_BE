@@ -62,7 +62,7 @@ public class ChatService {
                 .map(this::toMessageDto)
                 .collect(Collectors.toList());
 
-        ChatRoomDetailDto detailDto = toDetailDto(room, currentUserId, null);
+        ChatRoomDetailDto detailDto = toDetailDto(room, currentUserId);
         detailDto.setMessages(messageDtos);
 
         return detailDto;
@@ -91,11 +91,8 @@ public class ChatService {
     private ChatRoomListDto toListDto(ChatRoom room, Long currentUserId, ChatMessage lastMessage, Long unreadCount) {
         ChatRoomListDto dto = new ChatRoomListDto();
         
-        // 상대방 정보 조회
         Long otherUserId = room.getOwnerUserId().equals(currentUserId) ? room.getWalkerUserId() : room.getOwnerUserId();
         User otherUser = userRepository.findById(otherUserId).orElse(null);
-
-        // 게시글 정보 조회
         Board board = boardRepository.findById(room.getBoardId()).orElse(null);
 
         dto.setChatRoomId(room.getChatRoomId());
@@ -116,29 +113,22 @@ public class ChatService {
         return dto;
     }
 
-    private ChatRoomDetailDto toDetailDto(ChatRoom room, Long currentUserId, Object appointment) {
+    private ChatRoomDetailDto toDetailDto(ChatRoom room, Long currentUserId) {
         ChatRoomDetailDto dto = new ChatRoomDetailDto();
         
-        // 상대방 정보 조회
         Long otherUserId = room.getOwnerUserId().equals(currentUserId) ? room.getWalkerUserId() : room.getOwnerUserId();
         User otherUser = userRepository.findById(otherUserId).orElse(null);
-
-        // 게시글 정보 조회
         Board board = boardRepository.findById(room.getBoardId()).orElse(null);
 
         dto.setChatRoomId(room.getChatRoomId());
         if (otherUser != null) {
             dto.setProfileName(otherUser.getNickname());
-            // User 엔티티에 전화번호 필드가 없으므로 주석 처리
-            // dto.setProfilePhone(otherUser.getPhoneNumber());
+            dto.setProfilePhone(otherUser.getPhoneNumber());
         }
         
         if (board != null) {
             dto.setPost(BoardResponseDto.from(board));
         }
-
-        // appointment 매핑은 기존 로직 유지
-        // dto.setAppointment(appointment);
 
         return dto;
     }

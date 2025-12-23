@@ -1,5 +1,6 @@
 package com.gdg.backend.chat.controller;
 
+import com.gdg.backend.chat.dto.ChatMessageDto;
 import com.gdg.backend.chat.dto.ChatRoomDetailDto;
 import com.gdg.backend.chat.dto.ChatRoomListDto;
 import com.gdg.backend.chat.entity.ChatRoomStatus;
@@ -35,5 +36,10 @@ public class ChatController {
     public ResponseEntity<ChatRoomDetailDto> getRoomDetail(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                                            @PathVariable Long chatRoomId) {
         return ResponseEntity.ok(chatService.getChatRoomDetail(chatRoomId, userPrincipal.userId()));
+    }
+
+    @GetMapping("/rooms/{chatRoomId}/unread")
+    public ResponseEntity<List<ChatMessageDto>> getUnreadMessages(@PathVariable Long chatRoomId) {
+        return ResponseEntity.ok(chatService.getUnreadMessages(chatRoomId));
     }
 }

@@ -13,5 +13,5 @@ public class ChatRoomListDto {
     private String lastMessage;
     private LocalDateTime lastSentAt;
     private int unreadCount;
-    private String status;  // ALL, UNREAD, COMPLETED
+    private String status; // ALL, UNREAD, COMPLETED
 }
