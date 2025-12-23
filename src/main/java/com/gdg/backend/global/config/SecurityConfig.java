@@ -49,7 +49,10 @@ public class SecurityConfig {
                                 ,"/api/health"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/boards/**").authenticated()
-                        .requestMatchers("/pet/**").authenticated()
+                        .requestMatchers(
+                                "/pet/**",
+                                "/api/walk/**"
+                        ).authenticated()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN","SUPER_ADMIN")
                         .requestMatchers("/internal/**").hasAuthority("SUPER_ADMIN")
                         .anyRequest().authenticated()
