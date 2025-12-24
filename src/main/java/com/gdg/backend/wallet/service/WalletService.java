@@ -76,5 +76,26 @@ public class WalletService {
         return walletRepository.findById(userId)
                 .orElseGet(() -> walletRepository.save(new Wallet(userId)));
     }
+
+    public void charge(Long userId, long amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("충전 금액은 0보다 커야 합니다.");
+        }
+
+        Wallet wallet = walletRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("지갑이 존재하지 않습니다."));
+
+        wallet.increase(amount);
+
+        WalletTransaction transaction = WalletTransaction.charge(
+                userId,
+                amount,
+                wallet.getBalance()
+        );
+
+
+        walletTransactionRepository.save(transaction);
+    }
+
 }
 

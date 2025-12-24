@@ -3,6 +3,7 @@ package com.gdg.backend.wallet.controller;
 import com.gdg.backend.global.code.SuccessCode;
 import com.gdg.backend.global.response.ApiResponse;
 import com.gdg.backend.wallet.dto.WalletBalanceResponse;
+import com.gdg.backend.wallet.dto.WalletChargeRequest;
 import com.gdg.backend.wallet.dto.WalletTransactionResponse;
 import com.gdg.backend.wallet.dto.WalletUseRequest;
 import com.gdg.backend.wallet.service.WalletService;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/wallet")
@@ -58,6 +58,21 @@ public class WalletController {
                 request.getAmount(),
                 request.getReason()
         );
+        return ApiResponse.success(SuccessCode.OK);
+    }
+
+    @PostMapping("/charge")
+    public ResponseEntity<ApiResponse<Object>> charge(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestBody WalletChargeRequest request
+    ) {
+        Long userId = principal.userId();
+
+        walletService.charge(
+                userId,
+                request.getAmount()
+        );
+
         return ApiResponse.success(SuccessCode.OK);
     }
 

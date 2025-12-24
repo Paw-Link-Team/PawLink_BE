@@ -2,6 +2,7 @@ package com.gdg.backend.wallet.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,7 +29,7 @@ public class WalletTransaction {
     private long amount;
 
     @Column(nullable = false)
-    private long balanceAfter;    // 거래 후 잔액
+    private long balanceAfter;
 
     @Column(nullable = false)
     private String reason;
@@ -36,6 +37,7 @@ public class WalletTransaction {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Builder
     public WalletTransaction(
             Long userId,
             TransactionType type,
@@ -49,5 +51,34 @@ public class WalletTransaction {
         this.balanceAfter = balanceAfter;
         this.reason = reason;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public static WalletTransaction charge(
+            Long userId,
+            long amount,
+            long balanceAfter
+    ) {
+        return WalletTransaction.builder()
+                .userId(userId)
+                .type(TransactionType.CHARGE)
+                .amount(amount)
+                .balanceAfter(balanceAfter)
+                .reason("충전")
+                .build();
+    }
+
+    public static WalletTransaction use(
+            Long userId,
+            long amount,
+            long balanceAfter,
+            String reason
+    ) {
+        return WalletTransaction.builder()
+                .userId(userId)
+                .type(TransactionType.USE)
+                .amount(amount)
+                .balanceAfter(balanceAfter)
+                .reason(reason)
+                .build();
     }
 }

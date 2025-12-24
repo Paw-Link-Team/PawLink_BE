@@ -45,4 +45,8 @@ public class Wallet {
         }
         this.balance -= amount;
     }
+
+    public void increase(long amount) {
+        this.balance += amount;
+    }
 }
