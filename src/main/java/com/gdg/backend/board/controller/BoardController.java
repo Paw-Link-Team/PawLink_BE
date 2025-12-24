@@ -3,11 +3,13 @@ package com.gdg.backend.board.controller;
 import com.gdg.backend.board.dto.BoardRequestDto;
 import com.gdg.backend.board.dto.BoardResponseDto;
 import com.gdg.backend.board.service.BoardService;
+import com.gdg.backend.global.code.SuccessCode;
+import com.gdg.backend.global.response.ApiResponse;
+import com.gdg.backend.global.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import com.gdg.backend.global.security.UserPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,41 +21,42 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<Long> create(
+    public ResponseEntity<ApiResponse<Long>> create(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody BoardRequestDto dto
     ) {
-        return ResponseEntity.ok(
-                boardService.create(principal.userId(), dto)
-        );
+        Long boardId = boardService.create(principal.userId(), dto);
+        return ApiResponse.success(SuccessCode.CREATED, boardId);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<BoardResponseDto> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(boardService.findById(id));
+    @GetMapping("/{boardId}")
+    public ResponseEntity<ApiResponse<BoardResponseDto>> findById(
+            @PathVariable Long boardId
+    ) {
+        return ApiResponse.success(SuccessCode.READ_SUCCESS, boardService.findById(boardId));
     }
 
     @GetMapping
-    public ResponseEntity<List<BoardResponseDto>> findAll() {
-        return ResponseEntity.ok(boardService.findAll());
+    public ResponseEntity<ApiResponse<List<BoardResponseDto>>> findAll() {
+        return ApiResponse.success(SuccessCode.READ_SUCCESS, boardService.findAll());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> update(
+    @PatchMapping("/{boardId}")
+    public ResponseEntity<ApiResponse<Void>> update(
             @AuthenticationPrincipal UserPrincipal principal,
-            @PathVariable Long id,
+            @PathVariable Long boardId,
             @RequestBody BoardRequestDto dto
     ) {
-        boardService.update(id, principal.userId(), dto);
-        return ResponseEntity.ok().build();
+        boardService.update(boardId, principal.userId(), dto);
+        return ApiResponse.success(SuccessCode.OK, null);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<ApiResponse<Void>> delete(
             @AuthenticationPrincipal UserPrincipal principal,
-            @PathVariable Long id
+            @PathVariable Long boardId
     ) {
-        boardService.delete(id, principal.userId());
-        return ResponseEntity.noContent().build();
+        boardService.delete(boardId, principal.userId());
+        return ApiResponse.success(SuccessCode.OK, null);
     }
 }
