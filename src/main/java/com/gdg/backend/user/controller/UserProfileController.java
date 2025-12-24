@@ -5,6 +5,7 @@ import com.gdg.backend.global.response.ApiResponse;
 import com.gdg.backend.global.security.UserPrincipal;
 import com.gdg.backend.user.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +22,10 @@ public class UserProfileController {
 
     private final UserProfileService userProfileService;
 
-    @PatchMapping("/update")
+    @PatchMapping(
+            value = "/update",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public ResponseEntity<ApiResponse<Object>> updateProfileImage(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestPart("image") MultipartFile image

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "마이페이지")
 @RestController
@@ -41,12 +44,14 @@ public class UserController {
     }
 
     @Operation(summary = "정보 변경", description = "Token을 이용하여 이름, 프로필, 타입을 변경할 수 있습니다.")
-    @PatchMapping("/update")
+    @PatchMapping(
+            value = "/update",
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<ApiResponse<Object>> updateMyInfo(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody UserUpdateRequestDto request
-            ){
-
+    ) {
         userService.updateUser(principal.userId(), request);
         return ApiResponse.success(SuccessCode.USER_UPDATE);
     }

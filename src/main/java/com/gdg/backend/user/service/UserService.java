@@ -6,16 +6,19 @@ import com.gdg.backend.user.domain.Type;
 import com.gdg.backend.user.domain.User;
 import com.gdg.backend.user.dto.UserInfoResponseDto;
 import com.gdg.backend.user.dto.UserUpdateRequestDto;
+import com.gdg.backend.user.image.profile.ProfileImageService;
 import com.gdg.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ProfileImageService profileImageService;
 
     @Transactional(readOnly = true)
     public UserInfoResponseDto getMyInfo(Long userId){
@@ -25,18 +28,23 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(Long userId, UserUpdateRequestDto request){
-        User user = getUser(userId);
+    public void updateUser(Long userId, UserUpdateRequestDto request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
 
-        user.updateProfile(request.getNickname(), request.getProfileImageUrl());
+        if (request.getNickname() != null) {
+            user.updateNickname(request.getNickname());
+        }
 
-        if (request.getType() != null &&
-                request.getType() != user.getType()) {
+        if (request.getPhoneNumber() != null) {
+            user.updatePhoneNumber(request.getPhoneNumber());
+        }
 
-            validateTypeChange(user, request.getType());
+        if (request.getType() != null) {
             user.updateType(request.getType());
         }
     }
+
 
     @Transactional
     public void deleteUser(Long userId){

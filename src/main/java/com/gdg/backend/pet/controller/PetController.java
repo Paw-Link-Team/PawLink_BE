@@ -4,9 +4,11 @@ import com.gdg.backend.global.code.SuccessCode;
 import com.gdg.backend.global.exception.UnauthorizedException;
 import com.gdg.backend.global.response.ApiResponse;
 import com.gdg.backend.global.security.UserPrincipal;
+import com.gdg.backend.pet.dto.PetDetailResponse;
 import com.gdg.backend.pet.dto.PetRequestDto;
 import com.gdg.backend.pet.dto.PetResponseDto;
 import com.gdg.backend.pet.service.PetService;
+import com.gdg.backend.user.domain.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +27,7 @@ import java.util.List;
 
 @Tag(name = "pet 정보 컨트롤러")
 @RestController
-@RequestMapping("/pet")
+@RequestMapping("/api/pet")
 @RequiredArgsConstructor
 public class PetController {
 
@@ -55,6 +57,16 @@ public class PetController {
         );
     }
 
+    @GetMapping("/info/{petId}")
+    public ResponseEntity<ApiResponse<PetDetailResponse>>getPet(
+            @AuthenticationPrincipal UserPrincipal user,
+            @PathVariable Long petId
+    ) {
+        return ApiResponse.success(
+                SuccessCode.OK,
+                petService.getPet(user.userId(), petId)
+        );
+    }
 
     @PatchMapping("/update/{petId}")
     public ResponseEntity<ApiResponse<PetResponseDto>> updatePet(
@@ -70,12 +82,22 @@ public class PetController {
     }
 
 
-    @DeleteMapping("/{petId}")
+    @DeleteMapping("/delete/{petId}")
     public ResponseEntity<ApiResponse<Void>> deletePet(
             @PathVariable Long petId,
-            @RequestParam Long userId
-    ) {
-        petService.deletePet(userId, petId);
+            @AuthenticationPrincipal UserPrincipal principal
+            ) {
+        petService.deletePet(principal.userId(), petId);
         return ApiResponse.success(SuccessCode.OK, null);
     }
+
+    @PatchMapping("/{petId}/representative")
+    public ResponseEntity<ApiResponse<Void>> setRepresentative(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable Long petId
+    ) {
+        petService.setRepresentativePet(principal.userId(), petId);
+        return ApiResponse.success(SuccessCode.OK,null);
+    }
+
 }
