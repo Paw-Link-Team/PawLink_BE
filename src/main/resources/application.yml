@@ -60,4 +60,4 @@ server:
   forward-headers-strategy: framework
 
 frontend:
-  redirect-url: http://localhost:3000/oauth/callback
+  redirect-url: https://pawlink-frontend.vercel.app/oauth/callback

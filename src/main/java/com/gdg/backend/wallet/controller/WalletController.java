@@ -27,13 +27,13 @@ public class WalletController {
     private final WalletService walletService;
 
     @GetMapping("/balance")
-    public ResponseEntity<WalletBalanceResponse> getMyBalance(
+    public ResponseEntity<ApiResponse<WalletBalanceResponse>> getMyBalance(
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         Long userId = principal.userId();
 
         long balance = walletService.getBalance(userId);
-        return ResponseEntity.ok(new WalletBalanceResponse(balance));
+        return ApiResponse.success(new WalletBalanceResponse(balance));
     }
 
     @GetMapping("/transactions")
