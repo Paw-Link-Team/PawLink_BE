@@ -51,7 +51,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/boards/**").authenticated()
                         .requestMatchers(
                                 "/pet/**",
-                                "/api/walk/**"
+                                "/api/walk/**",
+                                "/api/wallet/**"
                         ).authenticated()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN","SUPER_ADMIN")
                         .requestMatchers("/internal/**").hasAuthority("SUPER_ADMIN")
