@@ -6,16 +6,19 @@ import com.gdg.backend.user.domain.Type;
 import com.gdg.backend.user.domain.User;
 import com.gdg.backend.user.dto.UserInfoResponseDto;
 import com.gdg.backend.user.dto.UserUpdateRequestDto;
+import com.gdg.backend.user.image.profile.ProfileImageService;
 import com.gdg.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ProfileImageService profileImageService;
 
     @Transactional(readOnly = true)
     public UserInfoResponseDto getMyInfo(Long userId){
@@ -25,18 +28,25 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(Long userId, UserUpdateRequestDto request){
-        User user = getUser(userId);
+    public void updateUser(
+            Long userId,
+            UserUpdateRequestDto request,
+            MultipartFile image
+    ) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
 
-        user.updateProfile(request.getNickname(), request.getProfileImageUrl());
+        user.updateProfile(
+                request.getNickname(),
+                request.getPhoneNumber()
+        );
 
-        if (request.getType() != null &&
-                request.getType() != user.getType()) {
-
-            validateTypeChange(user, request.getType());
-            user.updateType(request.getType());
+        if (image != null && !image.isEmpty()) {
+            String imageUrl = profileImageService.uploadProfileImage(image,userId);
+            user.updateProfileImage(imageUrl);
         }
     }
+
 
     @Transactional
     public void deleteUser(Long userId){

@@ -14,15 +14,16 @@ spring:
         show-sql: true
         format_sql: false
         use_sql_comments: true
+  profiles:
+    default: local
   cloud:
     aws:
       region:
         static: ap-northeast-2
       s3:
         bucket: pawlink-profile-images
-      credentials:
-        instance-profile: true
-
+      stack:
+        auto: false
 super-admin:
   oauthProvider: ${SUPER_ADMIN_PROVIDER}
   provider-id: ${SUPER_ADMIN_ID}
@@ -60,4 +61,4 @@ server:
   forward-headers-strategy: framework
 
 frontend:
-  redirect-url: https://pawlink-frontend.vercel.app/oauth/callback
+  redirect-url: http://localhost:3000/oauth/callback

@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -37,6 +38,9 @@ public class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Setter
+    private boolean isRepresentative;
 
     @Builder
     public Pet(Long id, String petName, String petAge, String petType, String petProfileImageUrl, User user, PetSex petSex){

@@ -11,5 +11,6 @@ public class PetRequestDto {
     @Setter
     private PetSex petSex;
     private String petType;
+    @Setter
     private String petProfileImageUrl;
 }

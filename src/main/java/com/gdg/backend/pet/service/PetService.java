@@ -1,9 +1,12 @@
 package com.gdg.backend.pet.service;
 
+import com.gdg.backend.global.exception.PetNotFoundException;
 import com.gdg.backend.global.exception.UserNotFoundException;
 import com.gdg.backend.pet.domain.Pet;
+import com.gdg.backend.pet.dto.PetDetailResponse;
 import com.gdg.backend.pet.dto.PetRequestDto;
 import com.gdg.backend.pet.dto.PetResponseDto;
+import com.gdg.backend.pet.image.profile.PetProfileImageConstants;
 import com.gdg.backend.pet.repository.PetRepository;
 import com.gdg.backend.user.domain.User;
 import com.gdg.backend.user.repository.UserRepository;
@@ -25,6 +28,12 @@ public class PetService {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException("유저를 찾을 수 없습니다."));
 
+        String imageUrl = petRequestDto.getPetProfileImageUrl();
+
+        if (imageUrl == null || imageUrl.isBlank()) {
+            imageUrl = PetProfileImageConstants.DEFAULT_PROFILE_IMAGE;
+            petRequestDto.setPetProfileImageUrl(imageUrl);
+        }
         Pet pet = Pet.create(user, petRequestDto);
 
         petRepository.save(pet);
@@ -39,6 +48,14 @@ public class PetService {
         return pets.stream()
                 .map(PetResponseDto::from)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public PetDetailResponse getPet(Long userId, Long petId) {
+        Pet pet = petRepository.findByIdAndUserId(petId, userId)
+                .orElseThrow(() -> new PetNotFoundException("반려견을 찾을 수 없습니다."));
+
+        return PetDetailResponse.from(pet);
     }
 
     @Transactional
@@ -65,5 +82,20 @@ public class PetService {
 
         petRepository.delete(pet);
     }
+
+    @Transactional
+    public void setRepresentativePet(Long userId, Long petId) {
+
+        Pet newRep = petRepository.findByIdAndUserId(petId, userId)
+                .orElseThrow(() -> new PetNotFoundException("반려견 없음"));
+
+        // 기존 대표 해제
+        petRepository.findByUserIdAndIsRepresentativeTrue(userId)
+                .ifPresent(p -> p.setRepresentative(false));
+
+        // 새 대표 설정
+        newRep.setRepresentative(true);
+    }
+
 
 }

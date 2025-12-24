@@ -1,0 +1,6 @@
+spring:
+  cloud:
+    aws:
+      credentials:
+        profile:
+          name: default

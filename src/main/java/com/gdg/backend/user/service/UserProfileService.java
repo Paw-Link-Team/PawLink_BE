@@ -12,39 +12,47 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserProfileService {
 
     private final UserRepository userRepository;
     private final ProfileImageService profileImageService;
 
-    @Transactional
     public void updateProfileImage(Long userId, MultipartFile image) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
 
-        // 새 이미지 업로드
-        String newImageUrl = profileImageService.uploadProfileImage(image, userId);
-
-        // 기존 이미지 삭제
-        profileImageService.deleteIfExists(user.getProfileImageUrl());
-
-        // User 엔티티 업데이트
-        user.updateProfileImage(newImageUrl);
-    }
-
-    @Transactional
-    public void deleteProfileImage(Long userId){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
-
-        String currentImage = user.getProfileImageUrl();
-
-        if (ProfileImageConstants.DEFAULT_PROFILE_IMAGE.equals(currentImage)) {
+        if (image == null || image.isEmpty()) {
             return;
         }
 
-        profileImageService.deleteIfExists(currentImage);
+        User user = findUser(userId);
+
+        String newImageUrl =
+                profileImageService.uploadProfileImage(image, userId);
+
+        deleteIfNotDefault(user.getProfileImageUrl());
+
+        user.updateProfileImage(newImageUrl);
+    }
+
+    public void deleteProfileImage(Long userId) {
+
+        User user = findUser(userId);
+
+        deleteIfNotDefault(user.getProfileImageUrl());
 
         user.updateProfileImage(ProfileImageConstants.DEFAULT_PROFILE_IMAGE);
+    }
+
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new UserNotFoundException("유저를 찾을 수 없습니다.")
+                );
+    }
+
+    private void deleteIfNotDefault(String imageUrl) {
+        if (!ProfileImageConstants.DEFAULT_PROFILE_IMAGE.equals(imageUrl)) {
+            profileImageService.deleteIfExists(imageUrl);
+        }
     }
 }
