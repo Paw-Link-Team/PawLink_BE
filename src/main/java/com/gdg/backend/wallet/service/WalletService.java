@@ -66,17 +66,14 @@ public class WalletService {
                 .toList();
     }
 
+    @Transactional
     public long getBalance(Long userId) {
         return walletRepository.findById(userId)
                 .map(Wallet::getBalance)
                 .orElse(0L);
     }
 
-    private Wallet getOrCreateWallet(Long userId) {
-        return walletRepository.findById(userId)
-                .orElseGet(() -> walletRepository.save(new Wallet(userId)));
-    }
-
+    @Transactional
     public void charge(Long userId, long amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("충전 금액은 0보다 커야 합니다.");
@@ -97,5 +94,9 @@ public class WalletService {
         walletTransactionRepository.save(transaction);
     }
 
+    private Wallet getOrCreateWallet(Long userId) {
+        return walletRepository.findById(userId)
+                .orElseGet(() -> walletRepository.save(new Wallet(userId)));
+    }
 }
 
