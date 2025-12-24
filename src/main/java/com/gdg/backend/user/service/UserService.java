@@ -28,22 +28,20 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(
-            Long userId,
-            UserUpdateRequestDto request,
-            MultipartFile image
-    ) {
+    public void updateUser(Long userId, UserUpdateRequestDto request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
+                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
 
-        user.updateProfile(
-                request.getNickname(),
-                request.getPhoneNumber()
-        );
+        if (request.getNickname() != null) {
+            user.updateNickname(request.getNickname());
+        }
 
-        if (image != null && !image.isEmpty()) {
-            String imageUrl = profileImageService.uploadProfileImage(image,userId);
-            user.updateProfileImage(imageUrl);
+        if (request.getPhoneNumber() != null) {
+            user.updatePhoneNumber(request.getPhoneNumber());
+        }
+
+        if (request.getType() != null) {
+            user.updateType(request.getType());
         }
     }
 

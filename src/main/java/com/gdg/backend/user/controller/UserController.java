@@ -46,18 +46,13 @@ public class UserController {
     @Operation(summary = "정보 변경", description = "Token을 이용하여 이름, 프로필, 타입을 변경할 수 있습니다.")
     @PatchMapping(
             value = "/update",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+            consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<ApiResponse<Object>> updateMyInfo(
             @AuthenticationPrincipal UserPrincipal principal,
-            @RequestPart("data") UserUpdateRequestDto request,
-            @RequestPart(value = "image", required = false) MultipartFile image
+            @RequestBody UserUpdateRequestDto request
     ) {
-        userService.updateUser(
-                principal.userId(),
-                request,
-                image
-        );
+        userService.updateUser(principal.userId(), request);
         return ApiResponse.success(SuccessCode.USER_UPDATE);
     }
 
