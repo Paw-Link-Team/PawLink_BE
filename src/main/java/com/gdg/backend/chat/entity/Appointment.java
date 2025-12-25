@@ -24,7 +24,7 @@ public class Appointment {
     private Long chatRoomId;
     private LocalDate date;
     private LocalTime time;
-    private String locationAddress;
+    private String locationAddress; // 도로명 주소
     private int reminderMinutesBefore;
 
     private LocalDateTime createdAt;
