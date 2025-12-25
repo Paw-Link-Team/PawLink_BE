@@ -1,4 +1,4 @@
-package com.gdg.backend.walkHistory.domain;
+package com.gdg.backend.walker.walkHistory.domain;
 
 import com.gdg.backend.user.domain.User;
 import jakarta.persistence.Column;

@@ -1,6 +1,7 @@
 package com.gdg.backend.pet.repository;
 
 import com.gdg.backend.pet.domain.Pet;
+import com.gdg.backend.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

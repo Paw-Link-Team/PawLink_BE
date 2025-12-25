@@ -1,5 +1,6 @@
 package com.gdg.backend.pet.service;
 
+import com.gdg.backend.global.code.ErrorCode;
 import com.gdg.backend.global.exception.PetNotFoundException;
 import com.gdg.backend.global.exception.UserNotFoundException;
 import com.gdg.backend.pet.domain.Pet;
@@ -11,6 +12,7 @@ import com.gdg.backend.pet.repository.PetRepository;
 import com.gdg.backend.user.domain.User;
 import com.gdg.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

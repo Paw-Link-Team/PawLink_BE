@@ -68,6 +68,9 @@ public class User {
     @Column(name = "phoneNumber", nullable = false)
     private String phoneNumber;
 
+    @Column(name = "location")
+    private String location;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(name = "pets")
     private List<Pet> pets = new ArrayList<>();

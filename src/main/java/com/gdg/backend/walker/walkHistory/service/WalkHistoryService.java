@@ -1,17 +1,21 @@
-package com.gdg.backend.walkHistory.service;
+package com.gdg.backend.walker.walkHistory.service;
 
 import com.gdg.backend.global.exception.UserNotFoundException;
 import com.gdg.backend.user.domain.User;
 import com.gdg.backend.user.repository.UserRepository;
-import com.gdg.backend.walkHistory.domain.WalkHistory;
-import com.gdg.backend.walkHistory.dto.WalkHistoryCreateRequest;
-import com.gdg.backend.walkHistory.dto.WalkHistoryResponse;
-import com.gdg.backend.walkHistory.repository.WalkHistoryRepository;
+import com.gdg.backend.walker.walkHistory.domain.WalkHistory;
+import com.gdg.backend.walker.walkHistory.dto.WalkHistoryCreateRequest;
+import com.gdg.backend.walker.walkHistory.dto.WalkHistoryResponse;
+import com.gdg.backend.walker.walkHistory.repository.WalkHistoryRepository;
+import com.gdg.backend.walker.domain.WalkerProfile;
+import com.gdg.backend.walker.repository.WalkerProfileRepository;
 import com.gdg.backend.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,6 +23,7 @@ import java.util.List;
 public class WalkHistoryService {
 
     private final WalkHistoryRepository walkHistoryRepository;
+    private final WalkerProfileRepository walkerProfileRepository;
     private final UserRepository userRepository;
     private final WalletService walletService;
 
@@ -55,6 +60,30 @@ public class WalkHistoryService {
                 .map(WalkHistoryResponse::from)
                 .toList();
     }
+
+    @Transactional
+    public void saveWalkHistory(
+            User user,
+            LocalDateTime startedAt,
+            LocalDateTime endedAt,
+            BigDecimal distanceKm
+    ) {
+        WalkHistory history = WalkHistory.builder()
+                .user(user)
+                .startedAt(startedAt)
+                .endedAt(endedAt)
+                .distanceKm(distanceKm)
+                .build();
+
+        walkHistoryRepository.save(history);
+
+        WalkerProfile profile =
+                walkerProfileRepository.findByUser(user)
+                        .orElseThrow(() -> new IllegalStateException("WalkerProfile 없음"));
+
+        profile.addWalk(distanceKm);
+    }
+
 
 
     private void validateRequest(WalkHistoryCreateRequest request) {
