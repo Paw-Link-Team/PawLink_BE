@@ -17,7 +17,6 @@ import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,55 +29,54 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
-
 @Component
 @Slf4j
 public class TokenProvider {
-    private final Key key;
-    @Getter
-    private final long accessTokenValiditySeconds;
-    @Getter
-    private final long refreshTokenValiditySeconds;
-    private final long signupTokenValiditySeconds;
 
-    public TokenProvider(@Value("${jwt.secret}") String secretKey,
-                         @Value("${jwt.access-token-validity-in-milliseconds}") long accessTokenValiditySeconds,
-                         @Value("${jwt.refresh-token-validity-in-milliseconds}") long refreshTokenValiditySeconds,
-                         @Value("${jwt.signup-token-validity-in-milliseconds}") long signupTokenValiditySeconds) {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+    private final Key key;
+
+    @Getter
+    private final long accessTokenValidityMillis;
+
+    @Getter
+    private final long refreshTokenValidityMillis;
+
+    private final long signupTokenValidityMillis;
+
+    public TokenProvider(JwtProperties jwtProperties) {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecret());
         this.key = Keys.hmacShaKeyFor(keyBytes);
-        this.accessTokenValiditySeconds = accessTokenValiditySeconds;
-        this.refreshTokenValiditySeconds = refreshTokenValiditySeconds;
-        this.signupTokenValiditySeconds =  signupTokenValiditySeconds;
-        log.info("JWT SECRET RAW = {}", secretKey);
-        log.info("JWT SECRET DECODED LENGTH = {}", Decoders.BASE64.decode(secretKey).length);
+
+        this.accessTokenValidityMillis = jwtProperties.getAccessTokenValidity();
+        this.refreshTokenValidityMillis = jwtProperties.getRefreshTokenValidity();
+        this.signupTokenValidityMillis = jwtProperties.getSignupTokenValidity();
+
+        log.info("JWT key initialized. key length = {}", keyBytes.length);
     }
 
-    public String createToken(User user, long seconds) {
-        long nowTime = new Date().getTime();
-
-        Date expiryDate = new Date(nowTime + seconds);
+    public String createToken(User user, long validityMillis) {
+        long now = System.currentTimeMillis();
+        Date expiryDate = new Date(now + validityMillis);
 
         return Jwts.builder()
-                .setSubject(user.getId().toString()) // user email
-                .claim("role", user.getRole().name()) //role : role에 따라 변경
+                .setSubject(user.getId().toString())
+                .claim("role", user.getRole().name())
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String accessToken(User user){
-        return createToken(user, accessTokenValiditySeconds);
+    public String accessToken(User user) {
+        return createToken(user, accessTokenValidityMillis);
     }
 
-    public String refreshToken(User user){
-        return createToken(user, refreshTokenValiditySeconds);
+    public String refreshToken(User user) {
+        return createToken(user, refreshTokenValidityMillis);
     }
 
-    public String idToken(OauthProvider provider, String providerId, String email){
-        Long time = new Date().getTime();
-
-        Date expiryDate = new Date(time+signupTokenValiditySeconds);
+    public String idToken(OauthProvider provider, String providerId, String email) {
+        long now = System.currentTimeMillis();
+        Date expiryDate = new Date(now + signupTokenValidityMillis);
 
         return Jwts.builder()
                 .setSubject("OAUTH_SIGNUP")
