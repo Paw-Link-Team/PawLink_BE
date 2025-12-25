@@ -1,5 +1,6 @@
 package com.gdg.backend.pet.service;
 
+import com.gdg.backend.board.repository.BoardRepository;
 import com.gdg.backend.global.code.ErrorCode;
 import com.gdg.backend.global.exception.PetNotFoundException;
 import com.gdg.backend.global.exception.UserNotFoundException;
@@ -24,6 +25,7 @@ public class PetService {
 
     private final PetRepository petRepository;
     private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
 
     @Transactional
     public PetResponseDto setPet(Long userId, PetRequestDto petRequestDto){
@@ -81,7 +83,7 @@ public class PetService {
                 .orElseThrow(() ->
                         new IllegalArgumentException("해당 반려동물을 삭제할 권한이 없습니다.")
                 );
-
+        boardRepository.deleteAllByPetId(petId);
         petRepository.delete(pet);
     }
 

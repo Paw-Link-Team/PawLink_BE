@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 public class WalkerProfileService {
@@ -14,14 +16,26 @@ public class WalkerProfileService {
     private final WalkerProfileRepository walkerProfileRepository;
 
     @Transactional
-    public WalkerProfile createIfAbsent(User user) {
-        return walkerProfileRepository
+    public void addWalk(User user, BigDecimal distanceKm) {
+
+        WalkerProfile profile = walkerProfileRepository
                 .findByUser(user)
-                .orElseGet(() -> walkerProfileRepository.save(
-                        WalkerProfile.builder()
-                                .user(user)
-                                .build()
-                ));
+                .orElseGet(() ->
+                        walkerProfileRepository.save(
+                                WalkerProfile.builder()
+                                        .user(user)
+                                        .build()
+                        )
+                );
+
+        profile.addWalk(distanceKm);
+    }
+
+    @Transactional(readOnly = true)
+    public WalkerProfile getProfile(User user) {
+        return walkerProfileRepository.findByUser(user)
+                .orElseThrow(() ->
+                        new IllegalStateException("WalkerProfile이 없습니다.")
+                );
     }
 }
-
