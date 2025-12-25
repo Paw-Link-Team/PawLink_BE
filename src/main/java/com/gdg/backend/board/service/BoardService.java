@@ -9,6 +9,7 @@ import com.gdg.backend.board.dto.MyBoardResponseDto;
 import com.gdg.backend.board.exception.BoardNotFoundException;
 import com.gdg.backend.board.repository.BoardRepository;
 import com.gdg.backend.global.exception.UserNotFoundException;
+import com.gdg.backend.global.security.UserPrincipal;
 import com.gdg.backend.pet.domain.Pet;
 import com.gdg.backend.pet.dto.PetProfileDto;
 import com.gdg.backend.pet.repository.PetRepository;
@@ -64,13 +65,7 @@ public class BoardService {
                 .toList();
     }
 
-    public BoardDetailResponseDto findDetail(Long boardId, Long userId) {
-        Board board = getBoard(boardId);
-        board.increaseViewCount();
-
-        return toDetailDto(board, userId);
-    }
-
+    @Transactional
     public void update(Long boardId, Long userId, BoardRequestDto dto) {
         Board board = getBoard(boardId);
         validateOwner(board, userId);
@@ -87,12 +82,14 @@ public class BoardService {
         );
     }
 
+    @Transactional
     public void delete(Long boardId, Long userId) {
         Board board = getBoard(boardId);
         validateOwner(board, userId);
         boardRepository.delete(board);
     }
 
+    @Transactional
     public void completeBoard(Long boardId, Long userId) {
         Board board = getBoard(boardId);
         validateOwner(board, userId);
@@ -107,17 +104,13 @@ public class BoardService {
                 .toList();
     }
 
-    private BoardResponseDto toResponseDto(Board board, Long userId) {
-        boolean interested = userId != null &&
-                boardInterestService.isInterested(userId, board.getId());
+    @Transactional
+    public BoardDetailResponseDto findDetail(Long boardId, Long userId) {
+        Board board = getBoard(boardId);
+        board.increaseViewCount();
 
-        long interestCount = boardInterestService.countInterest(board.getId());
+        boolean myBoard = userId != null && board.getUser().getId().equals(userId);
 
-        return BoardResponseDto.from(board)
-                .applyInterest(interested, interestCount);
-    }
-
-    private BoardDetailResponseDto toDetailDto(Board board, Long userId) {
         boolean interested = userId != null &&
                 boardInterestService.isInterested(userId, board.getId());
 
@@ -129,7 +122,19 @@ public class BoardService {
 
         return BoardDetailResponseDto.from(board)
                 .applyInterest(interested, interestCount)
-                .withDogProfile(dogProfile);
+                .withDogProfile(dogProfile)
+                .withMyBoard(myBoard);
+    }
+
+
+    private BoardResponseDto toResponseDto(Board board, Long userId) {
+        boolean interested = userId != null &&
+                boardInterestService.isInterested(userId, board.getId());
+
+        long interestCount = boardInterestService.countInterest(board.getId());
+
+        return BoardResponseDto.from(board)
+                .applyInterest(interested, interestCount);
     }
 
     private User getUser(Long userId) {

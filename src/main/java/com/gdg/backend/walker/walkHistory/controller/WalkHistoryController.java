@@ -1,12 +1,11 @@
-package com.gdg.backend.walkHistory.controller;
+package com.gdg.backend.walker.walkHistory.controller;
 
 import com.gdg.backend.global.code.SuccessCode;
 import com.gdg.backend.global.response.ApiResponse;
 import com.gdg.backend.global.security.UserPrincipal;
-import com.gdg.backend.walkHistory.dto.WalkHistoryCreateRequest;
-import com.gdg.backend.walkHistory.dto.WalkHistoryResponse;
-import com.gdg.backend.walkHistory.service.WalkHistoryService;
-import com.gdg.backend.user.domain.User;
+import com.gdg.backend.walker.walkHistory.dto.WalkHistoryCreateRequest;
+import com.gdg.backend.walker.walkHistory.dto.WalkHistoryResponse;
+import com.gdg.backend.walker.walkHistory.service.WalkHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

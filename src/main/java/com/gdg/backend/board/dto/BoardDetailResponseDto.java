@@ -32,6 +32,9 @@ public class BoardDetailResponseDto {
 
     private PetProfileDto petProfileDto;
 
+    private boolean myBoard;
+
+
 
     private BoardDetailResponseDto(
             Long id,
@@ -80,6 +83,12 @@ public class BoardDetailResponseDto {
         this.interestCount = interestCount;
         return this;
     }
+
+    public BoardDetailResponseDto withMyBoard(boolean myBoard) {
+        this.myBoard = myBoard;
+        return this;
+    }
+
 
     public BoardDetailResponseDto withDogProfile(PetProfileDto petProfileDto) {
         this.petProfileDto = petProfileDto;

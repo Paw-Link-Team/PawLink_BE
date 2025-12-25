@@ -59,4 +59,9 @@ public class BoardInterestService {
                 .map(BoardInterest::getBoard)
                 .toList();
     }
+
+    @Transactional
+    public long count(Long boardId) {
+        return boardInterestRepository.countByBoardId(boardId);
+    }
 }

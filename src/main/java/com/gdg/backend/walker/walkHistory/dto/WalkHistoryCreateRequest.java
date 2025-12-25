@@ -1,4 +1,4 @@
-package com.gdg.backend.walkHistory.dto;
+package com.gdg.backend.walker.walkHistory.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

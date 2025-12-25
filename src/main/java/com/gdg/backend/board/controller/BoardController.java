@@ -40,11 +40,16 @@ public class BoardController {
     public ResponseEntity<ApiResponse<List<MyBoardResponseDto>>> myBoards(
             @AuthenticationPrincipal UserPrincipal principal
     ) {
+        if (principal == null) {
+            throw new AccessDeniedException("로그인이 필요합니다.");
+        }
+
         return ApiResponse.success(
                 SuccessCode.READ_SUCCESS,
                 boardService.findMyBoards(principal.userId())
         );
     }
+
 
 
     @GetMapping
