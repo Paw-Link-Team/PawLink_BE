@@ -5,6 +5,8 @@ import com.gdg.backend.chat.dto.ChatRoomDetailDto;
 import com.gdg.backend.chat.dto.ChatRoomListDto;
 import com.gdg.backend.chat.entity.ChatRoomStatus;
 import com.gdg.backend.chat.service.ChatService;
+import com.gdg.backend.global.code.SuccessCode;
+import com.gdg.backend.global.response.ApiResponse;
 import com.gdg.backend.global.security.UserPrincipal;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -28,25 +30,25 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping("/rooms")
-    public ResponseEntity<Long> createRoom(@AuthenticationPrincipal UserPrincipal userPrincipal,
+    public ResponseEntity<ApiResponse<Long>> createRoom(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                            @RequestParam Long boardId) {
-        return ResponseEntity.ok(chatService.createChatRoom(boardId, userPrincipal.userId()));
+        return ApiResponse.success(SuccessCode.CREATED, chatService.createChatRoom(boardId, userPrincipal.userId()));
     }
 
     @GetMapping("/rooms")
-    public ResponseEntity<List<ChatRoomListDto>> getRooms(@AuthenticationPrincipal UserPrincipal userPrincipal,
+    public ResponseEntity<ApiResponse<List<ChatRoomListDto>>> getRooms(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                                           @RequestParam(defaultValue = "ALL") ChatRoomStatus filter) {
-        return ResponseEntity.ok(chatService.getChatRooms(userPrincipal.userId(), filter));
+        return ApiResponse.success(SuccessCode.READ_SUCCESS, chatService.getChatRooms(userPrincipal.userId(), filter));
     }
 
     @GetMapping("/rooms/{chatRoomId}")
-    public ResponseEntity<ChatRoomDetailDto> getRoomDetail(@AuthenticationPrincipal UserPrincipal userPrincipal,
+    public ResponseEntity<ApiResponse<ChatRoomDetailDto>> getRoomDetail(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                                            @PathVariable Long chatRoomId) {
-        return ResponseEntity.ok(chatService.getChatRoomDetail(chatRoomId, userPrincipal.userId()));
+        return ApiResponse.success(SuccessCode.READ_SUCCESS, chatService.getChatRoomDetail(chatRoomId, userPrincipal.userId()));
     }
 
     @GetMapping("/rooms/{chatRoomId}/unread")
-    public ResponseEntity<List<ChatMessageDto>> getUnreadMessages(@PathVariable Long chatRoomId) {
-        return ResponseEntity.ok(chatService.getUnreadMessages(chatRoomId));
+    public ResponseEntity<ApiResponse<List<ChatMessageDto>>> getUnreadMessages(@PathVariable Long chatRoomId) {
+        return ApiResponse.success(SuccessCode.READ_SUCCESS, chatService.getUnreadMessages(chatRoomId));
     }
 }
