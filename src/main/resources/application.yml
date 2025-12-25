@@ -62,3 +62,8 @@ server:
 
 frontend:
   redirect-url: https://pawlink-frontend.vercel.app/oauth/callback
+
+kakao-map:
+  app-key: ${KAKAO_MAP_APP_KEY}
+  js-key: ${KAKAO_MAP_JS_KEY}
+  secret-key: ${KAKAO_MAP_SECRET_KEY}
