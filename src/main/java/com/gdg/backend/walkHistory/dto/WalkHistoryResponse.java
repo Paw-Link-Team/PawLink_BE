@@ -1,6 +1,6 @@
-package com.gdg.backend.walker.walkHistory.dto;
+package com.gdg.backend.walkHistory.dto;
 
-import com.gdg.backend.walker.walkHistory.domain.WalkHistory;
+import com.gdg.backend.walkHistory.domain.WalkHistory;
 import lombok.Builder;
 import lombok.Getter;
 
