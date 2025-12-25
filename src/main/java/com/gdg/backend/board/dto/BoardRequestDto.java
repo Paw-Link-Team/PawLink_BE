@@ -12,5 +12,6 @@ public class BoardRequestDto {
     private LocalDateTime walkTime;
     private WalkTimeType walkTimeType;
     private String location;
+    private Long petId;
 
 }

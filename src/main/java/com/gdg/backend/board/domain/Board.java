@@ -1,5 +1,6 @@
 package com.gdg.backend.board.domain;
 
+import com.gdg.backend.pet.domain.Pet;
 import com.gdg.backend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -42,6 +45,14 @@ public class Board {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BoardStatus status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pet_id")
+    private Pet pet;
+
     @Builder
     private Board(
             String title,
@@ -49,7 +60,8 @@ public class Board {
             String location,
             LocalDateTime walkTime,
             WalkTimeType walkTimeType,
-            User user
+            User user,
+            Pet pet
     ) {
         this.title = title;
         this.description = description;
@@ -57,16 +69,18 @@ public class Board {
         this.walkTime = walkTime;
         this.walkTimeType = walkTimeType;
         this.user = user;
+        this.pet = pet;
         this.viewCount = 0L;
+        this.status = BoardStatus.OPEN;
     }
-
     public static Board create(
             String title,
             String description,
             String location,
             LocalDateTime walkTime,
             WalkTimeType walkTimeType,
-            User user
+            User user,
+            Pet pet
     ) {
         return Board.builder()
                 .title(title)
@@ -75,24 +89,42 @@ public class Board {
                 .walkTime(walkTime)
                 .walkTimeType(walkTimeType)
                 .user(user)
+                .pet(pet)
                 .build();
     }
+
 
     public void update(
             String title,
             String description,
             String location,
             LocalDateTime walkTime,
-            WalkTimeType walkTimeType
+            WalkTimeType walkTimeType,
+            Pet pet
     ) {
         this.title = title;
         this.description = description;
         this.location = location;
         this.walkTime = walkTime;
         this.walkTimeType = walkTimeType;
+        this.pet = pet;
     }
+
 
     public void increaseViewCount() {
         this.viewCount++;
     }
+
+    public void complete() {
+        this.status = BoardStatus.COMPLETED;
+    }
+
+    public boolean isCompleted() {
+        return this.status == BoardStatus.COMPLETED;
+    }
+
+    public void changePet(Pet pet) {
+        this.pet = pet;
+    }
+
 }
