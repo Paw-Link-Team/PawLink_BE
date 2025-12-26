@@ -8,7 +8,7 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show-sql: true
@@ -62,7 +62,7 @@ server:
   forward-headers-strategy: framework
 
 frontend:
-  redirect-url: https://pawlink-forntend.vercel.app/oauth/callback
+  redirect-url: https://pawlink-frontend.vercel.app/oauth/callback
 
 kakao-map:
   app-key: ${KAKAO_MAP_APP_KEY}
