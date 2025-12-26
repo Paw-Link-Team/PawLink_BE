@@ -22,4 +22,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     // 이미 존재하는 채팅방인지 확인 (게시글 ID와 신청자 ID로 조회)
     Optional<ChatRoom> findByBoardIdAndWalkerUserId(Long boardId, Long walkerUserId);
+
+    // 게시글 ID로 채팅방 목록 조회
+    List<ChatRoom> findByBoardId(Long boardId);
 }
