@@ -12,10 +12,20 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 
     List<ChatMessage> findByChatRoomIdAndIsReadFalse(Long chatRoomId);
 
-    @Query("SELECT cm FROM ChatMessage cm WHERE cm.id IN " +
-           "(SELECT MAX(m.id) FROM ChatMessage m GROUP BY m.chatRoomId)")
+    @Query("""
+        SELECT cm FROM ChatMessage cm
+        WHERE cm.id IN (
+            SELECT MAX(m.id) FROM ChatMessage m GROUP BY m.chatRoomId
+        )
+    """)
     List<ChatMessage> findLatestMessages();
 
-    @Query("SELECT cm.chatRoomId, COUNT(cm) FROM ChatMessage cm WHERE cm.isRead = false GROUP BY cm.chatRoomId")
+    @Query("""
+        SELECT cm.chatRoomId, COUNT(cm)
+        FROM ChatMessage cm
+        WHERE cm.isRead = false
+        GROUP BY cm.chatRoomId
+    """)
     List<Object[]> countUnreadMessagesByRoom();
 }
+
