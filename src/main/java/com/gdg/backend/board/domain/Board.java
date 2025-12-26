@@ -105,10 +105,21 @@ public class Board {
         this.title = title;
         this.description = description;
         this.location = location;
-        this.walkTime = walkTime;
         this.walkTimeType = walkTimeType;
-        this.pet = pet;
+
+        // ⭐ 시간 유형에 따른 분기 (중요)
+        if (walkTimeType == WalkTimeType.UNDECIDED) {
+            this.walkTime = null;
+        } else {
+            this.walkTime = walkTime;
+        }
+
+        // ⭐ pet 변경 허용 (null이면 그대로 두고 싶으면 분기 가능)
+        if (pet != null) {
+            this.pet = pet;
+        }
     }
+
 
 
     public void increaseViewCount() {

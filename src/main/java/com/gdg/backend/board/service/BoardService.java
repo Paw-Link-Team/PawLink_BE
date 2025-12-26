@@ -5,6 +5,7 @@ import com.gdg.backend.board.domain.BoardStatus;
 import com.gdg.backend.board.dto.BoardDetailResponseDto;
 import com.gdg.backend.board.dto.BoardRequestDto;
 import com.gdg.backend.board.dto.BoardResponseDto;
+import com.gdg.backend.board.dto.BoardUpdateRequest;
 import com.gdg.backend.board.dto.MyBoardResponseDto;
 import com.gdg.backend.board.exception.BoardNotFoundException;
 import com.gdg.backend.board.repository.BoardRepository;
@@ -66,18 +67,30 @@ public class BoardService {
     }
 
     @Transactional
-    public void update(Long boardId, Long userId, BoardRequestDto dto) {
-        Board board = getBoard(boardId);
-        validateOwner(board, userId);
+    public void update(
+            Long boardId,
+            Long userId,
+            BoardUpdateRequest req
+    ) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(BoardNotFoundException::new);
 
-        Pet pet = getPetOrNull(dto.getPetId());
+        // 작성자 검증 (관리자 로직은 여기서 확장)
+        if (!board.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("수정 권한 없음");
+        }
+
+        Pet pet = null;
+        if (req.getPetId() != null) {
+            pet = petRepository.getReferenceById(req.getPetId());
+        }
 
         board.update(
-                dto.getTitle(),
-                dto.getDescription(),
-                dto.getLocation(),
-                dto.getWalkTime(),
-                dto.getWalkTimeType(),
+                req.getTitle(),
+                req.getDescription(),
+                req.getLocation(),
+                req.getWalkTime(),
+                req.getWalkTimeType(),
                 pet
         );
     }

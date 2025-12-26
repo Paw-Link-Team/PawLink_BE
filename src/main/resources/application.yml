@@ -62,7 +62,7 @@ server:
   forward-headers-strategy: framework
 
 frontend:
-  redirect-url: https://pawlink-frontend.vercel.app/oauth/callback
+  redirect-url: http://localhost:3000/oauth/callback
 
 kakao-map:
   app-key: ${KAKAO_MAP_APP_KEY}
