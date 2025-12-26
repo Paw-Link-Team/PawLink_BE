@@ -62,7 +62,7 @@ server:
   forward-headers-strategy: framework
 
 frontend:
-  redirect-url: http://localhost:3000/oauth/callback
+  redirect-url: https://api-pawlink.duckdns.org/oauth/callback
 
 kakao-map:
   app-key: ${KAKAO_MAP_APP_KEY}
