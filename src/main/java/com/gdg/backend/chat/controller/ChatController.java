@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping({"/api/chat", "/chat"})
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
 public class ChatController {
