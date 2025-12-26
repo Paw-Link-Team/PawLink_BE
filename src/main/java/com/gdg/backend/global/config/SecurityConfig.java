@@ -53,7 +53,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/pet/**",
                                 "/api/walk/**",
-                                "/api/wallet/**"
+                                "/api/wallet/**",
+                                "/api/chat/**",
+                                "/chat/**"
                         ).authenticated()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN","SUPER_ADMIN")
                         .requestMatchers("/internal/**").hasAuthority("SUPER_ADMIN")
