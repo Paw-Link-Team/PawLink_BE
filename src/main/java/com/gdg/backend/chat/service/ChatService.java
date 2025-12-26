@@ -84,7 +84,7 @@ public class ChatService {
     @Transactional
     public ChatRoomDetailDto getChatRoomDetail(Long chatRoomId, Long currentUserId) {
         ChatRoom room = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new NoSuchElementException("채팅방을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("유효하지 않은 채팅방입니다."));
 
         List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderBySentAtAsc(chatRoomId);
         List<ChatMessageDto> messageDtos = messages.stream()
