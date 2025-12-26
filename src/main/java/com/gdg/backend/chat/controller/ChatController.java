@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,7 +36,7 @@ public class ChatController {
         return ApiResponse.success(SuccessCode.CREATED, chatService.createChatRoom(boardId, userPrincipal.userId()));
     }
 
-    @PostMapping("/board/{boardId}")
+    @RequestMapping(value = "/board/{boardId}", method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<ApiResponse<Long>> createRoomByBoardId(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                                                  @PathVariable Long boardId) {
         return ApiResponse.success(SuccessCode.CREATED, chatService.createChatRoom(boardId, userPrincipal.userId()));
