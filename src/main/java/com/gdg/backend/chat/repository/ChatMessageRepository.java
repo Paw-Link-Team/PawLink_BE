@@ -27,5 +27,6 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
         GROUP BY cm.chatRoomId
     """)
     List<Object[]> countUnreadMessagesByRoom();
+
 }
 

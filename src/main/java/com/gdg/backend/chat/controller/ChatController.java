@@ -12,7 +12,12 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -24,66 +29,59 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    /* =========================
-     * 채팅방 생성
-     * ========================= */
-
     /**
-     * 게시글 기준 채팅방 생성 (또는 기존 방 반환)
+     * 게시글 기준 채팅방 생성
      */
     @PostMapping("/rooms/by-board/{boardId}")
     public ResponseEntity<ApiResponse<Long>> createRoomByBoard(
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable Long boardId
     ) {
-        Long userId = principal.userId();
-        Long chatRoomId = chatService.createChatRoom(boardId, userId);
+        Long chatRoomId =
+                chatService.createChatRoom(boardId, principal.userId());
+
         return ApiResponse.success(SuccessCode.CREATED, chatRoomId);
     }
 
-    /* =========================
-     * 채팅방 목록
-     * ========================= */
-
+    /**
+     * 채팅방 목록 조회
+     */
     @GetMapping("/rooms")
     public ResponseEntity<ApiResponse<List<ChatRoomListDto>>> getRooms(
             @AuthenticationPrincipal UserPrincipal principal,
-            @RequestParam(defaultValue = "ALL") ChatRoomStatus status
+            @RequestParam(defaultValue = "ALL") ChatRoomStatus filter
     ) {
-        Long userId = principal.userId();
         return ApiResponse.success(
                 SuccessCode.READ_SUCCESS,
-                chatService.getChatRooms(userId, status)
+                chatService.getChatRooms(principal.userId(), filter)
         );
     }
 
-    /* =========================
-     * 채팅방 상세
-     * ========================= */
-
+    /**
+     * 채팅방 상세 조회
+     */
     @GetMapping("/rooms/{chatRoomId}")
     public ResponseEntity<ApiResponse<ChatRoomDetailDto>> getRoomDetail(
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable Long chatRoomId
     ) {
-        Long userId = principal.userId();
         return ApiResponse.success(
                 SuccessCode.READ_SUCCESS,
-                chatService.getChatRoomDetail(chatRoomId, userId)
+                chatService.getChatRoomDetail(chatRoomId, principal.userId())
         );
     }
 
-    /* =========================
+    /**
      * 안 읽은 메시지 조회
-     * ========================= */
-
+     */
     @GetMapping("/rooms/{chatRoomId}/messages/unread")
     public ResponseEntity<ApiResponse<List<ChatMessageDto>>> getUnreadMessages(
+            @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable Long chatRoomId
     ) {
         return ApiResponse.success(
                 SuccessCode.READ_SUCCESS,
-                chatService.getUnreadMessages(chatRoomId)
+                chatService.getUnreadMessages(chatRoomId, principal.userId())
         );
     }
 }
