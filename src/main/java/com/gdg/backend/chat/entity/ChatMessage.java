@@ -12,24 +12,30 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "chat_messages")
 @Getter
 @Setter
+@Table(name = "chat_message")
 public class ChatMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Long chatRoomId;
+
+    @Column(nullable = false)
     private Long senderUserId;
+
+    @Column(nullable = false)
     private String senderNickname;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String message;
 
+    @Column(nullable = false)
     private LocalDateTime sentAt;
-    
-    @Column(name = "is_read")
-    private boolean isRead;
+
+    @Column(name = "is_read", nullable = false)
+    private boolean isRead = false;
 }

@@ -4,6 +4,7 @@ import com.gdg.backend.global.code.SuccessCode;
 import com.gdg.backend.global.response.ApiResponse;
 import com.gdg.backend.global.security.UserPrincipal;
 import com.gdg.backend.walkHistory.dto.WalkHistoryCreateRequest;
+import com.gdg.backend.walkHistory.dto.WalkHistoryDetailResponse;
 import com.gdg.backend.walkHistory.dto.WalkHistoryResponse;
 import com.gdg.backend.walkHistory.service.WalkHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,4 +53,25 @@ public class WalkHistoryController {
                 walkHistoryService.create(principal.userId(), request)
         );
     }
+
+    @GetMapping("/{walkId}")
+    public ResponseEntity<ApiResponse<WalkHistoryDetailResponse>> getDetail(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable Long walkId
+    ) {
+        return ApiResponse.success(
+                SuccessCode.READ_SUCCESS,
+                walkHistoryService.getDetail(principal.userId(), walkId)
+        );
+    }
+
+    @DeleteMapping("/{walkId}")
+    public ResponseEntity<ApiResponse<Void>> delete(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable Long walkId
+    ) {
+        walkHistoryService.delete(principal.userId(), walkId);
+        return ApiResponse.success(SuccessCode.DELETE,null);
+    }
+
 }

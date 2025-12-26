@@ -10,9 +10,13 @@ import com.gdg.backend.walk.session.service.WalkSessionService;
 import com.gdg.backend.walkHistory.dto.WalkHistoryResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/walks")
@@ -39,11 +43,12 @@ public class WalkSessionController {
     /* =====================
      * 산책 종료
      * ===================== */
-    @PostMapping("/{walkId}/end")
+    @PostMapping(value = "/{walkId}/end", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<WalkHistoryResponse>> end(
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable Long walkId,
-            @RequestBody @Valid WalkEndRequest request
+            @RequestPart("data") @Valid WalkEndRequest request,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
     ) {
         return ApiResponse.success(
                 SuccessCode.CREATED,
@@ -52,7 +57,8 @@ public class WalkSessionController {
                         walkId,
                         request.getDistanceKm(),
                         request.getMemo(),
-                        request.getPoop()
+                        request.getPoop(),
+                        images
                 )
         );
     }
