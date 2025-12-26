@@ -1,48 +1,36 @@
 package com.gdg.backend.walkHistory.dto;
 
+import com.gdg.backend.walkHistory.domain.PoopStatus;
 import com.gdg.backend.walkHistory.domain.WalkHistory;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
 public class WalkHistoryResponse {
 
     private Long id;
-    private String date;
-    private String duration;
+    private LocalDateTime startedAt;
+    private LocalDateTime endedAt;
+    private int durationSec;
     private BigDecimal distanceKm;
-    private double averageSpeed;
+    private double avgSpeed;
+    private String memo;
+    private PoopStatus poop;
 
     public static WalkHistoryResponse from(WalkHistory walkHistory) {
         return WalkHistoryResponse.builder()
                 .id(walkHistory.getId())
-                .date(formatDate(walkHistory.getStartedAt()))
-                .duration(formatDuration(walkHistory.getDuration()))
+                .startedAt(walkHistory.getStartedAt())
+                .endedAt(walkHistory.getEndedAt())
+                .durationSec(walkHistory.getDurationSec())
                 .distanceKm(walkHistory.getDistanceKm())
-                .averageSpeed(
-                        Math.round(
-                                walkHistory.getAverageSpeedKmPerHour() * 10
-                        ) / 10.0
-                )
+                .avgSpeed(walkHistory.getAvgSpeed())
+                .memo(walkHistory.getMemo())
+                .poop(walkHistory.getPoop())
                 .build();
     }
-
-    private static String formatDate(java.time.LocalDateTime dateTime) {
-        return dateTime.getYear() + ". "
-                + dateTime.getMonthValue() + ". "
-                + dateTime.getDayOfMonth();
-    }
-
-    private static String formatDuration(java.time.Duration duration) {
-        long seconds = duration.getSeconds();
-        long h = seconds / 3600;
-        long m = (seconds % 3600) / 60;
-        long s = seconds % 60;
-
-        return String.format("%02d:%02d:%02d", h, m, s);
-    }
 }
-

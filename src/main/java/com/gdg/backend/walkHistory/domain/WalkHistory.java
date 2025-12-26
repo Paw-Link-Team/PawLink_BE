@@ -3,6 +3,8 @@ package com.gdg.backend.walkHistory.domain;
 import com.gdg.backend.user.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,44 +35,55 @@ public class WalkHistory {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // 산책 시작 시각
+    // 산책 시작 / 종료
     @Column(nullable = false)
     private LocalDateTime startedAt;
 
-    // 산책 종료 시각
     @Column(nullable = false)
     private LocalDateTime endedAt;
+
+    // 총 산책 시간 (초)
+    @Column(nullable = false)
+    private int durationSec;
 
     // 이동 거리 (km)
     @Column(nullable = false, precision = 5, scale = 2)
     private BigDecimal distanceKm;
 
+    // 평균 속도
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private double avgSpeed;
+
+    // 산책 메모
+    @Column(length = 500)
+    private String memo;
+
+    // 배변 여부
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PoopStatus poop;
 
     @Builder
     private WalkHistory(
             User user,
             LocalDateTime startedAt,
             LocalDateTime endedAt,
-            BigDecimal distanceKm
+            BigDecimal distanceKm,
+            String memo,
+            PoopStatus poop
     ) {
         this.user = user;
         this.startedAt = startedAt;
         this.endedAt = endedAt;
         this.distanceKm = distanceKm;
-        this.createdAt = LocalDateTime.now();
-    }
+        this.memo = memo;
+        this.poop = poop;
 
-    /* ===== 파생값 ===== */
+        this.durationSec =
+                (int) Duration.between(startedAt, endedAt).getSeconds();
 
-    public Duration getDuration() {
-        return Duration.between(startedAt, endedAt);
-    }
-
-    public double getAverageSpeedKmPerHour() {
-        double hours = getDuration().toSeconds() / 3600.0;
-        return hours == 0 ? 0 : distanceKm.doubleValue() / hours;
+        double hours = durationSec / 3600.0;
+        this.avgSpeed =
+                hours == 0 ? 0 : distanceKm.doubleValue() / hours;
     }
 }
-

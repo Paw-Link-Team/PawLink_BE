@@ -3,22 +3,23 @@ package com.gdg.backend.walkHistory.controller;
 import com.gdg.backend.global.code.SuccessCode;
 import com.gdg.backend.global.response.ApiResponse;
 import com.gdg.backend.global.security.UserPrincipal;
+import com.gdg.backend.walkHistory.dto.WalkHistoryCreateRequest;
 import com.gdg.backend.walkHistory.dto.WalkHistoryResponse;
 import com.gdg.backend.walkHistory.service.WalkHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "walk History api controller")
+@Tag(name = "Walk History API")
 @RestController
 @RequestMapping("/api/walk-histories")
 @RequiredArgsConstructor
-@Tag(name = "Walk History Query API")
 public class WalkHistoryController {
 
     private final WalkHistoryService walkHistoryService;
@@ -32,8 +33,23 @@ public class WalkHistoryController {
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         return ApiResponse.success(
-                SuccessCode.OK,
+                SuccessCode.READ_SUCCESS,
                 walkHistoryService.findMyHistories(principal.userId())
+        );
+    }
+
+    @Operation(
+            summary = "산책 기록 저장",
+            description = "산책 종료 후 산책 기록을 저장합니다."
+    )
+    @PostMapping
+    public ResponseEntity<ApiResponse<WalkHistoryResponse>> createWalkHistory(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestBody @Valid WalkHistoryCreateRequest request
+    ) {
+        return ApiResponse.success(
+                SuccessCode.CREATED,
+                walkHistoryService.create(principal.userId(), request)
         );
     }
 }

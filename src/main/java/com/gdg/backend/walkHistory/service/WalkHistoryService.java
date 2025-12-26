@@ -4,14 +4,13 @@ import com.gdg.backend.global.exception.UserNotFoundException;
 import com.gdg.backend.user.domain.User;
 import com.gdg.backend.user.repository.UserRepository;
 import com.gdg.backend.walkHistory.domain.WalkHistory;
+import com.gdg.backend.walkHistory.dto.WalkHistoryCreateRequest;
 import com.gdg.backend.walkHistory.dto.WalkHistoryResponse;
 import com.gdg.backend.walkHistory.repository.WalkHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,23 +21,27 @@ public class WalkHistoryService {
     private final UserRepository userRepository;
 
     @Transactional
-    public WalkHistory save(
-            User user,
-            LocalDateTime startedAt,
-            LocalDateTime endedAt,
-            BigDecimal distanceKm
+    public WalkHistoryResponse create(
+            Long userId,
+            WalkHistoryCreateRequest request
     ) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
 
-        validate(startedAt, endedAt, distanceKm);
+        validate(request);
 
         WalkHistory history = WalkHistory.builder()
                 .user(user)
-                .startedAt(startedAt)
-                .endedAt(endedAt)
-                .distanceKm(distanceKm)
+                .startedAt(request.getStartedAt())
+                .endedAt(request.getEndedAt())
+                .distanceKm(request.getDistanceKm())
+                .memo(request.getMemo())
+                .poop(request.getPoop())
                 .build();
 
-        return walkHistoryRepository.save(history);
+        walkHistoryRepository.save(history);
+
+        return WalkHistoryResponse.from(history);
     }
 
     @Transactional(readOnly = true)
@@ -54,18 +57,14 @@ public class WalkHistoryService {
                 .toList();
     }
 
-    private void validate(
-            LocalDateTime startedAt,
-            LocalDateTime endedAt,
-            BigDecimal distanceKm
-    ) {
-        if (startedAt == null || endedAt == null) {
+    private void validate(WalkHistoryCreateRequest request) {
+        if (request.getStartedAt() == null || request.getEndedAt() == null) {
             throw new IllegalArgumentException("산책 시작/종료 시각은 필수입니다.");
         }
-        if (endedAt.isBefore(startedAt)) {
+        if (request.getEndedAt().isBefore(request.getStartedAt())) {
             throw new IllegalArgumentException("종료 시각은 시작 시각 이후여야 합니다.");
         }
-        if (distanceKm == null || distanceKm.signum() <= 0) {
+        if (request.getDistanceKm() == null || request.getDistanceKm().signum() <= 0) {
             throw new IllegalArgumentException("이동 거리는 0보다 커야 합니다.");
         }
     }
