@@ -51,7 +51,7 @@ public class ChatService {
                     newRoom.setBoardId(boardId);
                     newRoom.setOwnerUserId(board.getUser().getId()); // 게시글 작성자
                     newRoom.setWalkerUserId(currentUserId);          // 신청자
-                    newRoom.setStatus(ChatRoomStatus.ALL);
+                    newRoom.setStatus(ChatRoomStatus.ACTIVE);
                     newRoom.setCreatedAt(LocalDateTime.now());
                     newRoom.setUpdatedAt(LocalDateTime.now());
                     return chatRoomRepository.save(newRoom).getChatRoomId();
