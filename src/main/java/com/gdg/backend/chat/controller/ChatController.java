@@ -15,43 +15,45 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/chat")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
 public class ChatController {
 
     private final ChatService chatService;
 
-    @PostMapping("/api/chat/rooms")
+    @PostMapping("/rooms")
     public ResponseEntity<ApiResponse<Long>> createRoom(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                            @RequestParam Long boardId) {
         return ApiResponse.success(SuccessCode.CREATED, chatService.createChatRoom(boardId, userPrincipal.userId()));
     }
 
-    @PostMapping({"/api/chat/board/{boardId}", "/chat/board/{boardId}"})
+    @PostMapping("/board/{boardId}")
     public ResponseEntity<ApiResponse<Long>> createRoomByBoardId(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                                                  @PathVariable Long boardId) {
         return ApiResponse.success(SuccessCode.CREATED, chatService.createChatRoom(boardId, userPrincipal.userId()));
     }
 
-    @GetMapping("/api/chat/rooms")
+    @GetMapping("/rooms")
     public ResponseEntity<ApiResponse<List<ChatRoomListDto>>> getRooms(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                                           @RequestParam(defaultValue = "ALL") ChatRoomStatus filter) {
         return ApiResponse.success(SuccessCode.READ_SUCCESS, chatService.getChatRooms(userPrincipal.userId(), filter));
     }
 
-    @GetMapping("/api/chat/rooms/{chatRoomId}")
+    @GetMapping("/rooms/{chatRoomId}")
     public ResponseEntity<ApiResponse<ChatRoomDetailDto>> getRoomDetail(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                                            @PathVariable Long chatRoomId) {
         return ApiResponse.success(SuccessCode.READ_SUCCESS, chatService.getChatRoomDetail(chatRoomId, userPrincipal.userId()));
     }
 
-    @GetMapping("/api/chat/rooms/{chatRoomId}/unread")
+    @GetMapping("/rooms/{chatRoomId}/unread")
     public ResponseEntity<ApiResponse<List<ChatMessageDto>>> getUnreadMessages(@PathVariable Long chatRoomId) {
         return ApiResponse.success(SuccessCode.READ_SUCCESS, chatService.getUnreadMessages(chatRoomId));
     }
