@@ -3,6 +3,7 @@ package com.gdg.backend.board.controller;
 import com.gdg.backend.board.dto.BoardDetailResponseDto;
 import com.gdg.backend.board.dto.BoardRequestDto;
 import com.gdg.backend.board.dto.BoardResponseDto;
+import com.gdg.backend.board.dto.BoardUpdateRequest;
 import com.gdg.backend.board.dto.MyBoardResponseDto;
 import com.gdg.backend.board.service.BoardService;
 import com.gdg.backend.global.code.SuccessCode;
@@ -22,6 +23,7 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final BoardService boardRepository;
 
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> create(
@@ -90,17 +92,13 @@ public class BoardController {
     }
 
     @PutMapping("/{boardId}")
-    public ResponseEntity<ApiResponse<Void>> update(
-            @AuthenticationPrincipal UserPrincipal principal,
+    public ResponseEntity<Void> updateBoard(
             @PathVariable Long boardId,
-            @RequestBody BoardRequestDto dto
+            @RequestBody BoardUpdateRequest request,
+            @AuthenticationPrincipal UserPrincipal principal
     ) {
-        if (principal == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
-        }
-
-        boardService.update(boardId, principal.userId(), dto);
-        return ApiResponse.success(SuccessCode.OK, null);
+        boardService.update(boardId, principal.userId(), request);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{boardId}")
