@@ -1,27 +1,21 @@
 package com.gdg.backend.chat.config;
-
+import com.corundumstudio.socketio.Configuration;
 import com.corundumstudio.socketio.SocketIOServer;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@org.springframework.context.annotation.Configuration
 public class SocketIOConfig {
-
-    @Value("${socketio.host:0.0.0.0}")
-    private String host;
-
-    @Value("${socketio.port:443}")
-    private int port;
 
     @Bean
     public SocketIOServer socketIOServer() {
-        com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
-        config.setHostname(host);
-        config.setPort(port);
+        Configuration config = new Configuration();
 
-        //config.setOrigin("http://localhost:3000");
+        config.setHostname("0.0.0.0");
+        config.setPort(9092); // ⚠️ 프론트 VITE_SOCKET_URL 과 반드시 동일
+
+        config.setOrigin("*"); // 개발 단계에서는 허용
 
         return new SocketIOServer(config);
     }
 }
+

@@ -18,4 +18,5 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 
     @Query("SELECT cm.chatRoomId, COUNT(cm) FROM ChatMessage cm WHERE cm.isRead = false GROUP BY cm.chatRoomId")
     List<Object[]> countUnreadMessagesByRoom();
+
 }

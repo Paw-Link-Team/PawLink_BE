@@ -25,4 +25,16 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     // 게시글 ID로 채팅방 목록 조회
     List<ChatRoom> findByBoardId(Long boardId);
+
+    boolean existsByChatRoomIdAndOwnerUserId(
+            Long chatRoomId,
+            Long userId
+    );
+
+    boolean existsByChatRoomIdAndWalkerUserId(
+            Long chatRoomId,
+            Long userId
+    );
+
+    Optional<ChatRoom> findByChatRoomId(Long chatRoomId);
 }

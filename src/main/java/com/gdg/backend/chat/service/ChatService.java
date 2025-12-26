@@ -4,6 +4,7 @@ import com.gdg.backend.board.domain.Board;
 import com.gdg.backend.board.dto.BoardResponseDto;
 import com.gdg.backend.board.repository.BoardRepository;
 import com.gdg.backend.chat.dto.ChatMessageDto;
+import com.gdg.backend.chat.dto.ChatMessagePayload;
 import com.gdg.backend.chat.dto.ChatRoomDetailDto;
 import com.gdg.backend.chat.dto.ChatRoomListDto;
 import com.gdg.backend.chat.entity.ChatMessage;
@@ -14,6 +15,7 @@ import com.gdg.backend.chat.repository.ChatRoomRepository;
 import com.gdg.backend.user.domain.User;
 import com.gdg.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -110,8 +112,48 @@ public class ChatService {
         return toMessageDto(saved);
     }
 
-    public List<ChatMessageDto> getUnreadMessages(Long chatRoomId) {
-        List<ChatMessage> unreadMessages = chatMessageRepository.findByChatRoomIdAndIsReadFalse(chatRoomId);
+    @Transactional
+    public ChatMessageDto saveSocketMessage(Long chatRoomId, String message) {
+
+        // 1️⃣ 채팅방 조회
+        ChatRoom room = chatRoomRepository.findByChatRoomId(chatRoomId)
+                .orElseThrow(() -> new IllegalArgumentException("ChatRoom not found"));
+
+        // 2️⃣ senderUserId 결정 (현재는 owner 기준)
+        Long senderUserId = room.getOwnerUserId();
+        if (senderUserId == null) {
+            throw new IllegalStateException("ChatRoom has no ownerUserId");
+        }
+
+        // 3️⃣ 사용자 조회
+        User sender = userRepository.findById(senderUserId)
+                .orElseThrow(() -> new IllegalStateException("Sender user not found"));
+
+        // 4️⃣ 메시지 엔티티 생성
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setChatRoomId(chatRoomId);
+        chatMessage.setSenderUserId(sender.getId());
+        chatMessage.setSenderNickname(sender.getNickname());
+        chatMessage.setMessage(message);
+        chatMessage.setSentAt(LocalDateTime.now());
+        chatMessage.setRead(false);
+
+        chatMessageRepository.save(chatMessage);
+
+        // 5️⃣ DTO 변환
+        return toMessageDto(chatMessage);
+    }
+
+
+
+    public List<ChatMessageDto> getUnreadMessages(Long chatRoomId, Long userId) {
+
+        // 🔐 채팅방 접근 권한 검증
+        validateChatRoomParticipant(chatRoomId, userId);
+
+        List<ChatMessage> unreadMessages =
+                chatMessageRepository.findByChatRoomIdAndIsReadFalse(chatRoomId);
+
         return unreadMessages.stream()
                 .map(this::toMessageDto)
                 .collect(Collectors.toList());
@@ -172,4 +214,17 @@ public class ChatService {
         dto.setRead(entity.isRead());
         return dto;
     }
+
+    private void validateChatRoomParticipant(Long chatRoomId, Long userId) {
+        boolean isOwner =
+                chatRoomRepository.existsByChatRoomIdAndOwnerUserId(chatRoomId, userId);
+
+        boolean isWalker =
+                chatRoomRepository.existsByChatRoomIdAndWalkerUserId(chatRoomId, userId);
+
+        if (!isOwner && !isWalker) {
+            throw new AccessDeniedException("채팅방 접근 권한이 없습니다.");
+        }
+    }
+
 }

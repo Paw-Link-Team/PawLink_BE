@@ -1,66 +1,44 @@
 package com.gdg.backend.chat.socket;
 
 import com.corundumstudio.socketio.SocketIOServer;
-import com.gdg.backend.chat.dto.ChatMessageDto;
-import com.gdg.backend.chat.service.ChatService;
+import com.corundumstudio.socketio.SocketIOClient;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class ChatSocketHandler {
 
     private final SocketIOServer server;
-    private final ChatService chatService;
-
-    public ChatSocketHandler(SocketIOServer server, ChatService chatService) {
-        this.server = server;
-        this.chatService = chatService;
-    }
+    private boolean started = false;
 
     @PostConstruct
     public void startServer() {
-        registerEvents();
-        server.start();
-        log.info("Socket.IO server started");
+        if (started) {
+            log.warn("⚠️ Socket server already started. Skip.");
+            return;
+        }
+
+        try {
+            server.start();
+            started = true;
+            log.info("✅ Chat Socket Server started on port 9092");
+        } catch (Exception e) {
+            log.error("❌ Failed to start socket server", e);
+            throw e;
+        }
     }
 
     @PreDestroy
     public void stopServer() {
-        server.stop();
-        log.info("Socket.IO server stopped");
-    }
-
-    private void registerEvents() {
-        // 연결 리스너
-        server.addConnectListener(client -> log.info("Client connected: {}", client.getSessionId()));
-
-        // 연결 해제 리스너
-        server.addDisconnectListener(client -> log.info("Client disconnected: {}", client.getSessionId()));
-
-        // 방 입장 이벤트
-        server.addEventListener("joinRoom", Long.class, (client, chatRoomId, ackSender) -> {
-            client.joinRoom(String.valueOf(chatRoomId));
-            log.info("Client {} joined room {}", client.getSessionId(), chatRoomId);
-        });
-
-        // 방 퇴장 이벤트
-        server.addEventListener("leaveRoom", Long.class, (client, chatRoomId, ackSender) -> {
-            client.leaveRoom(String.valueOf(chatRoomId));
-            log.info("Client {} left room {}", client.getSessionId(), chatRoomId);
-        });
-
-        // 메시지 전송 이벤트
-        server.addEventListener("sendMessage", ChatMessageDto.class, (client, messageDto, ackSender) -> {
-            log.info("Received message from {}: {}", messageDto.getSenderNickname(), messageDto.getMessage());
-            
-            // DB 저장
-            ChatMessageDto saved = chatService.saveMessage(messageDto);
-            
-            // 해당 방에 있는 모든 클라이언트에게 'newMessage' 이벤트 전송
-            server.getRoomOperations(String.valueOf(saved.getChatRoomId())).sendEvent("newMessage", saved);
-        });
+        if (started) {
+            server.stop();
+            started = false;
+            log.info("🛑 Chat Socket Server stopped");
+        }
     }
 }
