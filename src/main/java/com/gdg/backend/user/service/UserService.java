@@ -41,6 +41,7 @@ public class UserService {
         }
 
         if (request.getType() != null) {
+            validateTypeChange(user, request.getType());
             user.updateType(request.getType());
         }
     }

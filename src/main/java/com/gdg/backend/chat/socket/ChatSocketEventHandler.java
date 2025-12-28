@@ -47,6 +47,7 @@ public class ChatSocketEventHandler {
     ) {
         if (payload == null ||
                 payload.getChatRoomId() == null ||
+                payload.getSenderUserId() == null ||
                 payload.getMessage() == null ||
                 payload.getMessage().isBlank()) {
             log.warn("❌ invalid payload {}", payload);
@@ -54,9 +55,10 @@ public class ChatSocketEventHandler {
         }
 
         Long roomId = payload.getChatRoomId();
+        Long senderUserId = payload.getSenderUserId();
 
         ChatMessageDto saved =
-                chatService.saveSocketMessage(roomId, payload.getMessage());
+                chatService.saveSocketMessage(roomId, senderUserId, payload.getMessage());
 
         server.getRoomOperations(roomId.toString())
                 .sendEvent("newMessage", saved);

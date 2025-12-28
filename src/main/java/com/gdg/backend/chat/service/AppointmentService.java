@@ -18,6 +18,9 @@ public class AppointmentService {
 
     public void saveOrUpdate(Long chatRoomId, AppointmentDto dto) {
         Appointment appt = appointmentRepository.findByChatRoomId(chatRoomId).orElse(new Appointment());
+        if (appt.getId() == null) {
+            appt.setCreatedAt(LocalDateTime.now());
+        }
         appt.setChatRoomId(chatRoomId);
         appt.setDate(dto.getDate());
         appt.setTime(dto.getTime());

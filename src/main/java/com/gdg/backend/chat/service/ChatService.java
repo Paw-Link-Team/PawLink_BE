@@ -85,6 +85,7 @@ public class ChatService {
 
     @Transactional
     public ChatRoomDetailDto getChatRoomDetail(Long chatRoomId, Long currentUserId) {
+        validateChatRoomParticipant(chatRoomId, currentUserId);
         ChatRoom room = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new NoSuchElementException("유효하지 않은 채팅방입니다."));
 
@@ -113,23 +114,17 @@ public class ChatService {
     }
 
     @Transactional
-    public ChatMessageDto saveSocketMessage(Long chatRoomId, String message) {
+    public ChatMessageDto saveSocketMessage(Long chatRoomId, Long senderUserId, String message) {
 
-        // 1️⃣ 채팅방 조회
+        //채팅방 조회
         ChatRoom room = chatRoomRepository.findByChatRoomId(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("ChatRoom not found"));
 
-        // 2️⃣ senderUserId 결정 (현재는 owner 기준)
-        Long senderUserId = room.getOwnerUserId();
-        if (senderUserId == null) {
-            throw new IllegalStateException("ChatRoom has no ownerUserId");
-        }
-
-        // 3️⃣ 사용자 조회
+        //사용자 조회
         User sender = userRepository.findById(senderUserId)
                 .orElseThrow(() -> new IllegalStateException("Sender user not found"));
 
-        // 4️⃣ 메시지 엔티티 생성
+        //메시지 엔티티 생성
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setChatRoomId(chatRoomId);
         chatMessage.setSenderUserId(sender.getId());
@@ -140,7 +135,7 @@ public class ChatService {
 
         chatMessageRepository.save(chatMessage);
 
-        // 5️⃣ DTO 변환
+        //DTO 변환
         return toMessageDto(chatMessage);
     }
 
@@ -148,7 +143,7 @@ public class ChatService {
 
     public List<ChatMessageDto> getUnreadMessages(Long chatRoomId, Long userId) {
 
-        // 🔐 채팅방 접근 권한 검증
+        //채팅방 접근 권한 검증
         validateChatRoomParticipant(chatRoomId, userId);
 
         List<ChatMessage> unreadMessages =

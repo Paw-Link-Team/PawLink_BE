@@ -74,7 +74,7 @@ public class ChatController {
     /**
      * 안 읽은 메시지 조회
      */
-    @GetMapping("/rooms/{chatRoomId}/messages/unread")
+    @GetMapping("/rooms/{chatRoomId}/unread")
     public ResponseEntity<ApiResponse<List<ChatMessageDto>>> getUnreadMessages(
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable Long chatRoomId
