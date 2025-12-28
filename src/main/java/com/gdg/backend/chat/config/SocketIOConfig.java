@@ -12,14 +12,18 @@ public class SocketIOConfig {
         Configuration config = new Configuration();
 
         config.setHostname("0.0.0.0");
-        config.setPort(9092); // ⚠️ 프론트 VITE_SOCKET_URL 과 반드시 동일
+        config.setPort(9092);
 
         config.setContext("/socket.io");
+
         config.setTransports(
                 Transport.POLLING,
                 Transport.WEBSOCKET
         );
 
+        // ✅ 이 3줄이 없으면 지금처럼 403 발생
+        config.setAllowCustomRequests(true);
+        config.setAllowHeaders("*");
         config.setOrigin("*");
 
         return new SocketIOServer(config);
