@@ -2,6 +2,8 @@ package com.gdg.backend.chat.socket;
 
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
+import com.corundumstudio.socketio.annotation.OnConnect;
+import com.corundumstudio.socketio.annotation.OnDisconnect;
 import com.gdg.backend.chat.dto.ChatMessageDto;
 import com.gdg.backend.chat.dto.ChatMessagePayload;
 import com.gdg.backend.chat.service.ChatService;
@@ -17,6 +19,17 @@ public class ChatSocketEventHandler {
 
     private final SocketIOServer server;
     private final ChatService chatService;
+
+
+    @OnConnect
+    public void onConnect(SocketIOClient client) {
+        log.info("✅ SOCKET CONNECTED: {}", client.getSessionId());
+    }
+
+    @OnDisconnect
+    public void onDisconnect(SocketIOClient client) {
+        log.info("❌ SOCKET DISCONNECTED: {}", client.getSessionId());
+    }
 
     @PostConstruct
     public void register() {
@@ -39,6 +52,7 @@ public class ChatSocketEventHandler {
                 this::handleSendMessage
         );
     }
+
 
     private void handleSendMessage(
             SocketIOClient client,
