@@ -8,6 +8,5 @@ import lombok.Setter;
 public class ChatMessagePayload {
     private Long chatRoomId;
     private Long senderUserId;
-    private String senderNickname;
     private String message;
 }
