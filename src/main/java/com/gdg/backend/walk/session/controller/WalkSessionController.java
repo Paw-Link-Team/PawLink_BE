@@ -28,17 +28,18 @@ public class WalkSessionController {
     /* =====================
      * 산책 시작
      * ===================== */
-    @PostMapping("/start")
-    public ResponseEntity<ApiResponse<WalkStartResponse>> start(
-            @AuthenticationPrincipal UserPrincipal principal
-    ) {
+        @PostMapping("/start/${walkId}")
+        public ResponseEntity<ApiResponse<WalkStartResponse>> start(
+                @AuthenticationPrincipal UserPrincipal principal,
+                @PathVariable Long walkId // walkId를 요청 파라미터로 받음
+        ) {
         return ApiResponse.success(
                 SuccessCode.CREATED,
                 WalkStartResponse.from(
-                        walkSessionService.start(principal.userId())
-                )
-        );
-    }
+                        walkSessionService.start(principal.userId(), walkId) // walkId를 서비스에 전달
+                        )
+                );
+        }
 
     /* =====================
      * 산책 종료
