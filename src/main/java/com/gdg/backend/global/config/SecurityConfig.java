@@ -52,7 +52,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/boards/**").authenticated()
                         .requestMatchers(
                                 "/pet/**",
-                                "/api/walk/**",
+                                "/api/walks/**",
                                 "/api/wallet/**",
                                 "/api/chat/**",
                                 "/chat/**"
