@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;
@@ -65,6 +64,7 @@ public class ChatService {
                 });
     }
 
+    @Transactional(readOnly = true)
     public List<ChatRoomListDto> getChatRooms(Long currentUserId, ChatRoomStatus filter) {
         List<ChatRoom> rooms = switch (filter) {
             case UNREAD -> chatRoomRepository.findUnreadRoomsByUser(currentUserId);
@@ -140,7 +140,7 @@ public class ChatService {
     }
 
 
-
+    @Transactional(readOnly = true)
     public List<ChatMessageDto> getUnreadMessages(Long chatRoomId, Long userId) {
 
         //채팅방 접근 권한 검증

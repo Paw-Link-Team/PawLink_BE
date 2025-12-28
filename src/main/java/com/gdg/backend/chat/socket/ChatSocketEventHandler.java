@@ -51,19 +51,25 @@ public class ChatSocketEventHandler {
                 payload.getMessage() == null ||
                 payload.getMessage().isBlank()) {
             log.warn("❌ invalid payload {}", payload);
+            client.sendEvent("sendError", "Invalid message payload");
             return;
         }
 
         Long roomId = payload.getChatRoomId();
         Long senderUserId = payload.getSenderUserId();
 
-        ChatMessageDto saved =
-                chatService.saveSocketMessage(roomId, senderUserId, payload.getMessage());
+        try {
+            ChatMessageDto saved =
+                    chatService.saveSocketMessage(roomId, senderUserId, payload.getMessage());
 
-        server.getRoomOperations(roomId.toString())
-                .sendEvent("newMessage", saved);
+            server.getRoomOperations(roomId.toString())
+                    .sendEvent("newMessage", saved);
 
-        log.info("📤 newMessage room={} sender={}",
-                roomId, saved.getSenderUserId());
+            log.info("📤 newMessage room={} sender={}",
+                    roomId, saved.getSenderUserId());
+        } catch (Exception e) {
+            log.error("❌ Failed to send message", e);
+            client.sendEvent("sendError", "Failed to send message: " + e.getMessage());
+        }
     }
 }
