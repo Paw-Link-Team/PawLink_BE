@@ -39,15 +39,21 @@ public class WalkSessionService {
     private final ChatService chatService;
 
     @Transactional
-    public WalkSession start(Long userId) {
-        User user = existUser(userId);
+public WalkSession start(Long userId, Long walkId) {
+    // 사용자 존재 확인
+    User user = existUser(userId);
 
-        if (walkSessionRepository.existsByUser(user)) {
-            throw new IllegalStateException("이미 진행 중인 산책이 있습니다.");
-        }
-
-        return walkSessionRepository.save(WalkSession.start(user));
+    // 이미 진행 중인 산책이 있는지 확인
+    if (walkSessionRepository.existsByUser(user)) {
+        throw new IllegalStateException("이미 진행 중인 산책이 있습니다.");
     }
+
+    // walkId를 사용하여 새로운 WalkSession 시작
+    WalkSession walkSession = WalkSession.start(user, walkId);
+
+    // WalkSession 저장
+    return walkSessionRepository.save(walkSession);
+}
 
     @Transactional
     public WalkHistoryResponse end(
@@ -122,18 +128,18 @@ public class WalkSessionService {
                         new UserNotFoundException("유저를 찾을 수 없습니다."));
     }
 
-    public void saveImages(Long walkHistoryId, List<MultipartFile> images) {
-        if (images == null || images.isEmpty()) return;
+    private User existUser(Long userId, Long walkId) {
+    // 주어진 userId로 사용자가 존재하는지 확인
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
 
-        for (MultipartFile image : images) {
-            String imageUrl = s3Uploader.upload(
-                    image,
-                    "walk-history/" + walkHistoryId
-            );
-
-            walkHistoryImageRepository.save(
-                    WalkHistoryImage.of(walkHistoryId, imageUrl)
-            );
-        }
+    // walkId에 대한 검증을 추가, 예를 들어 이미 해당 walkId로 진행 중인 세션이 있는지 확인
+    WalkSession existingSession = walkSessionRepository.findByWalkId(walkId);
+    if (existingSession != null && !existingSession.getUser().equals(user)) {
+        throw new IllegalStateException("이미 해당 walkId로 진행 중인 산책 세션이 있습니다.");
     }
+
+    return user;
+}
+
 }
