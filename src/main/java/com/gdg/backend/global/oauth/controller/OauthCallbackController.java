@@ -66,6 +66,7 @@ public class OauthCallbackController {
                             + "?error=OAUTH_FAILED";
 
             response.sendRedirect(errorRedirect);
+
         }
     }
 }

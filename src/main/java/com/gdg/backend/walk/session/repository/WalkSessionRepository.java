@@ -9,9 +9,9 @@ import java.util.Optional;
 public interface WalkSessionRepository
         extends JpaRepository<WalkSession, Long> {
 
-    boolean existsByUser(User user);
 
-    Optional<WalkSession> findByUser(User user);
+    Optional<WalkSession> findByUserId(Long userId);
 
-    void deleteByUser(User user);
+    boolean existsByUserId(Long userId);
+
 }

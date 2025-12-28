@@ -83,7 +83,8 @@ public class SecurityConfig {
                 List.of(
                         "https://pawlink-frontend.vercel.app",
                         "http://localhost:3000",
-                        "http://182.215.194.170:3000"
+                        "http://182.215.194.170:3000",
+                        "http://192.168.219.48:3000"
                 )
         );
         configuration.setAllowCredentials(true);

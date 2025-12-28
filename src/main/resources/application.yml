@@ -8,7 +8,7 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show-sql: true
@@ -60,6 +60,8 @@ naver:
 
 server:
   forward-headers-strategy: framework
+  address: 0.0.0.0
+  port: 8080
 
 frontend:
   redirect-url: https://pawlink-frontend.vercel.app/oauth/callback
@@ -74,3 +76,7 @@ kakao-map:
 socketio:
   host: 0.0.0.0
   port: 9092
+
+
+
+

@@ -7,26 +7,51 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "chat_rooms")
+@Table(
+        name = "chat_rooms",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_chat_room_board_walker",
+                        columnNames = {"board_id", "walker_user_id"}
+                )
+        }
+)
 @Getter
-@Setter
 public class ChatRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatRoomId;
-    private Long boardId; // 게시글 ID 추가
+
+    private Long boardId;
     private Long ownerUserId;
     private Long walkerUserId;
 
     @Enumerated(EnumType.STRING)
-    private ChatRoomStatus status; // ALL, UNREAD, COMPLETED 구분
+    private ChatRoomStatus status;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    protected ChatRoom() {}
+
+    public static ChatRoom create(
+            Long boardId,
+            Long ownerUserId,
+            Long walkerUserId
+    ) {
+        ChatRoom room = new ChatRoom();
+        room.boardId = boardId;
+        room.ownerUserId = ownerUserId;
+        room.walkerUserId = walkerUserId;
+        room.status = ChatRoomStatus.ACTIVE;
+        room.createdAt = LocalDateTime.now();
+        room.updatedAt = LocalDateTime.now();
+        return room;
+    }
 }

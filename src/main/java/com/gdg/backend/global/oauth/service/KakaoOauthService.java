@@ -7,6 +7,7 @@ import com.gdg.backend.global.oauth.dto.UserInfoDto;
 import com.gdg.backend.global.oauth.dto.provider.KakaoTokenDto;
 import com.gdg.backend.global.oauth.dto.provider.KakaoUserResponseDto;
 import com.gdg.backend.user.domain.OauthProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class KakaoOauthService extends SocialOauthService {
 
     public KakaoOauthService(ObjectMapper objectMapper) {
@@ -52,6 +54,7 @@ public class KakaoOauthService extends SocialOauthService {
                     "redirect_uri", redirectUri,
                     "code", code
             ));
+            log.info(tokenJson);
 
             KakaoTokenDto kakaoTokenDto = objectMapper.readValue(tokenJson, KakaoTokenDto.class);
 
